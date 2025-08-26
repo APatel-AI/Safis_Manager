@@ -10,8 +10,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0a0a0a;
-  color: #ffffff;
+  background: #1F1E1D;
+  color: #C2C0B6;
   line-height: 1.6;
 }
 
@@ -32,7 +32,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(10, 10, 10, 0.8);
+  background: rgba(31, 30, 29, 0.8);
   backdrop-filter: blur(10px);
   z-index: 1000;
 }
@@ -50,7 +50,7 @@ body {
   font-size: 24px;
   font-weight: 600;
   text-decoration: none;
-  color: #ffffff;
+  color: #C2C0B6;
 }
 
 .logo img {
@@ -64,14 +64,14 @@ body {
 }
 
 .nav a {
-  color: #888;
+  color: #9B9690;
   text-decoration: none;
   font-size: 16px;
   transition: color 0.3s ease;
 }
 
 .nav a:hover {
-  color: #ffffff;
+  color: #C2C0B6;
 }
 
 /* Hero Section */
@@ -106,7 +106,7 @@ body {
 
 .hero-subtitle {
   font-size: 20px;
-  color: #888;
+  color: #9B9690;
   max-width: 600px;
   margin: 0 auto 40px;
 }
@@ -139,7 +139,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #888;
+  color: #9B9690;
   text-decoration: none;
   font-size: 14px;
 }
@@ -158,12 +158,12 @@ body {
   width: 100%;
   max-width: 800px;
   height: 400px;
-  background: #111;
+  background: #2A2826;
   border-radius: 12px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  border: 1px solid #333;
+  border: 1px solid #3E3A35;
 }
 
 .demo-placeholder {
@@ -171,7 +171,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #666;
+  color: #7A7669;
   text-align: center;
 }
 
@@ -189,7 +189,7 @@ body {
 
 .features-subtitle {
   text-align: center;
-  color: #888;
+  color: #9B9690;
   font-size: 18px;
   max-width: 600px;
   margin: 0 auto 60px;
@@ -232,14 +232,14 @@ body {
 }
 
 .feature-description {
-  color: #888;
+  color: #9B9690;
   font-size: 16px;
 }
 
 /* What's Inside Section */
 .whats-inside {
   padding: 80px 0;
-  background: #111;
+  background: #2A2826;
 }
 
 .whats-inside-title {
@@ -256,10 +256,10 @@ body {
 }
 
 .inside-card {
-  background: #1a1a1a;
+  background: #2A2826;
   border-radius: 12px;
   padding: 30px;
-  border: 1px solid #333;
+  border: 1px solid #3E3A35;
 }
 
 .inside-card-title {
@@ -269,7 +269,7 @@ body {
 }
 
 .inside-card-description {
-  color: #888;
+  color: #9B9690;
   font-size: 16px;
   margin-bottom: 20px;
 }
@@ -277,12 +277,12 @@ body {
 .inside-placeholder {
   width: 100%;
   height: 200px;
-  background: #222;
+  background: #34312D;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: #7A7669;
 }
 
 /* CTA Section */
@@ -298,7 +298,7 @@ body {
 }
 
 .cta-description {
-  color: #888;
+  color: #9B9690;
   font-size: 18px;
   max-width: 600px;
   margin: 0 auto 40px;
@@ -307,7 +307,7 @@ body {
 /* Installation Guide */
 .installation-guide {
   padding: 80px 0;
-  background: #111;
+  background: #2A2826;
 }
 
 .installation-title {
@@ -323,8 +323,8 @@ body {
 }
 
 .step {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: #2A2826;
+  border: 1px solid #3E3A35;
   border-radius: 8px;
   padding: 24px;
   margin-bottom: 16px;
@@ -343,7 +343,7 @@ body {
 }
 
 .step-description {
-  color: #888;
+  color: #9B9690;
 }
 
 /* Responsive */
