@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Safis - Smart Bookmark Manager",
+  "version": "1.0.0",
+  "description": "A smart bookmark manager with floating modal overlay for busy professionals",
+  
+  "permissions": [
+    "bookmarks",
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  
+  "action": {
+    "default_title": "Open Safis Bookmark Manager",
+    "default_icon": {
+      "16": "assets/glasses_emoji.png",
+      "32": "assets/glasses_emoji.png",
+      "48": "assets/glasses_emoji.png",
+      "128": "assets/glasses_emoji.png"
+    }
+  },
+  
+  "icons": {
+    "16": "assets/glasses_emoji.png",
+    "32": "assets/glasses_emoji.png",
+    "48": "assets/glasses_emoji.png",
+    "128": "assets/glasses_emoji.png"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["src/modal.js", "src/modal.css", "assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
