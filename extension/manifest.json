@@ -8,7 +8,8 @@
     "bookmarks",
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "system.display"
   ],
   
   "host_permissions": [
@@ -16,17 +17,9 @@
   ],
   
   "background": {
-    "service_worker": "src/background.js"
+    "service_worker": "src/background-service.js"
   },
   
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/content.js"],
-      "css": ["src/content.css"],
-      "run_at": "document_end"
-    }
-  ],
   
   "action": {
     "default_title": "Open Safis Bookmark Manager",
@@ -47,7 +40,7 @@
   
   "web_accessible_resources": [
     {
-      "resources": ["src/modal.js", "src/modal.css", "assets/*"],
+      "resources": ["src/modal-injector.js", "assets/*", "window.html", "src/window-script.js"],
       "matches": ["<all_urls>"]
     }
   ]

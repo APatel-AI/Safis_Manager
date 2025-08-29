@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safis - Bookmark Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #1F1E1D;
+      color: #C2C0B6;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+    
+    /* Sidebar Navigation */
+    #sidebar {
+      width: 50px;
+      background: #000;
+      border-right: 1px solid #222;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+    
+    /* Sidebar Icons */
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      flex: 1;
+    }
+    
+    .sidebar-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      color: #666;
+    }
+    
+    .sidebar-icon:hover {
+      background: #222 !important;
+      color: #fff !important;
+      transform: scale(1.05);
+    }
+    
+    .sidebar-icon.active {
+      background: #333 !important;
+      color: #fff !important;
+    }
+    
+    #modal-header {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    
+    /* View Options */
+    .view-toggle {
+      padding: 12px;
+      border-top: 1px solid #222;
+    }
+    
+    .view-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .view-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      color: #666;
+    }
+    
+    .view-icon:hover {
+      background: #333 !important;
+      color: #fff !important;
+    }
+    
+    .view-icon.active {
+      background: #444 !important;
+      color: #fff !important;
+    }
+    
+    /* Main Content Area */
+    #main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #111;
+      position: relative;
+    }
+    
+    /* Content Header */
+    #content-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    #content-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+    }
+    
+    #content-subtitle {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .sort-controls {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .sort-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: #666;
+    }
+    
+    .sort-btn.active {
+      background: #222;
+      color: #fff;
+    }
+    
+    .sort-btn:hover {
+      background: #333;
+      color: #fff;
+    }
+    
+    /* Bookmarks Container */
+    #bookmarks-container {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      min-height: 200px;
+    }
+    
+    #bookmarks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+    }
+    
+    #bookmarks-list {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    /* Loading animation */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    #bookmarks-loading {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 14px;
+      padding: 60px 0;
+      text-align: center;
+    }
+    
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid #333;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    
+    /* Search Popup */
+    #search-popup {
+      position: absolute;
+      top: 70px;
+      left: 80px;
+      width: 350px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      z-index: 200;
+      display: none;
+      overflow: hidden;
+    }
+    
+    #search-input {
+      width: 100%;
+      padding: 12px 16px 12px 40px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    
+    #search-input:focus {
+      border-color: #444;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+    }
+    
+    #search-results {
+      max-height: 300px;
+      overflow-y: auto;
+      border-top: 1px solid #333;
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #111;
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #444;
+    }
+    
+    /* Responsive design for compact window */
+    @media (max-width: 500px) {
+      #sidebar {
+        width: 40px;
+      }
+      
+      .sidebar-icon {
+        width: 32px;
+        height: 32px;
+      }
+      
+      #search-popup {
+        width: 250px;
+        left: 50px;
+      }
+      
+      #bookmarks-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 8px;
+      }
+      
+      #bookmarks-container {
+        padding: 12px;
+      }
+      
+      #content-header {
+        padding: 12px 16px;
+      }
+      
+      #content-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div id="sidebar">
+    <div class="sidebar-content">
+      <!-- Logo -->
+      <div id="modal-header">
+        <div style="font-size: 24px;">🤓</div>
+      </div>
+      
+      <!-- Search Icon -->
+      <div id="search-icon" class="sidebar-icon" title="Search bookmarks">
+        <div style="font-size: 20px;">🔍</div>
+      </div>
+      
+      <!-- Add Bookmark Icon -->
+      <div id="add-icon" class="sidebar-icon" title="Add current page">
+        <div style="font-size: 20px;">➕</div>
+      </div>
+      
+      <!-- Categories -->
+      <div style="width: 2px; height: 20px; background: #333; margin: 16px 0; border-radius: 1px;"></div>
+      
+      <div id="category-all-icon" class="sidebar-icon active" title="All bookmarks">
+        <div style="font-size: 18px;">📚</div>
+      </div>
+      
+      <div id="category-work-icon" class="sidebar-icon" title="Work">
+        <div style="font-size: 18px;">💼</div>
+      </div>
+      
+      <div id="category-personal-icon" class="sidebar-icon" title="Personal">
+        <div style="font-size: 18px;">👤</div>
+      </div>
+      
+      <div id="category-learning-icon" class="sidebar-icon" title="Learning">
+        <div style="font-size: 18px;">🎓</div>
+      </div>
+    </div>
+    
+    <!-- View Toggle at Bottom -->
+    <div class="view-toggle">
+      <div class="view-controls">
+        <div id="grid-view" class="view-icon active" title="Grid view">
+          <div style="font-size: 16px;">⊞</div>
+        </div>
+        <div id="list-view" class="view-icon" title="List view">
+          <div style="font-size: 16px;">☰</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div id="main-content">
+    <!-- Content Header -->
+    <div id="content-header">
+      <div>
+        <h2 id="content-title">All Bookmarks</h2>
+        <p id="content-subtitle">Your bookmark collection</p>
+      </div>
+      <div class="sort-controls">
+        <button id="sort-date" class="sort-btn active">Recent</button>
+        <button id="sort-name" class="sort-btn">A-Z</button>
+      </div>
+    </div>
+
+    <!-- Bookmarks Container -->
+    <div id="bookmarks-container">
+      <div id="bookmarks-grid">
+        <div id="bookmarks-loading">
+          <div class="loading-spinner"></div>
+          <div>Loading your bookmarks...</div>
+        </div>
+      </div>
+      <div id="bookmarks-list">
+        <!-- List view content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Popup -->
+  <div id="search-popup">
+    <div style="padding: 16px;">
+      <div style="position: relative;">
+        <input id="search-input" type="text" placeholder="Search bookmarks...">
+        <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; font-size: 16px;">🔍</div>
+      </div>
+    </div>
+    <div id="search-results">
+      <div style="padding: 16px; color: #666; font-size: 13px; text-align: center;">Start typing to search...</div>
+    </div>
+  </div>
+
+  <script src="src/window-script.js"></script>
+</body>
+</html>
