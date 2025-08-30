@@ -186,6 +186,37 @@
       gap: 8px;
       height: 100%;
       overflow-y: auto;
+      padding: 0 4px;
+    }
+    
+    /* Enhanced bookmark menu styles */
+    .bookmark-menu {
+      animation: menuFadeIn 0.15s ease-out;
+    }
+    
+    @keyframes menuFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .menu-item:hover {
+      transform: translateX(2px);
+    }
+    
+    .bookmark-item {
+      scroll-snap-align: start;
+    }
+    
+    /* Smooth scrolling for list */
+    #bookmarks-list {
+      scroll-behavior: smooth;
+      scroll-snap-type: y proximity;
     }
     
     /* Loading animation */
@@ -333,6 +364,10 @@
         <div style="font-size: 18px;">📚</div>
       </div>
       
+      <div id="my-folders-icon" class="sidebar-icon" title="My Folders">
+        <div style="font-size: 18px;">📁</div>
+      </div>
+      
       <div id="category-work-icon" class="sidebar-icon" title="Work">
         <div style="font-size: 18px;">💼</div>
       </div>
@@ -397,6 +432,286 @@
     </div>
     <div id="search-results">
       <div style="padding: 16px; color: #666; font-size: 13px; text-align: center;">Start typing to search...</div>
+    </div>
+  </div>
+
+  <!-- My Folders Panel -->
+  <div id="folders-panel" style="
+    position: absolute;
+    top: 0;
+    left: 50px;
+    width: calc(100% - 50px);
+    height: 100%;
+    background: #111;
+    border-left: 1px solid #222;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+  ">
+    <!-- Folders Header -->
+    <div style="padding: 16px 20px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #fff;">My Folders</h2>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #666;">Organize your bookmarks</p>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button id="create-folder-btn" style="
+          padding: 8px 12px;
+          border: none;
+          border-radius: 6px;
+          background: #667eea;
+          color: white;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+        ">+ New Folder</button>
+        <button id="close-folders-btn" style="
+          padding: 8px;
+          border: none;
+          border-radius: 6px;
+          background: #333;
+          color: white;
+          cursor: pointer;
+          transition: all 0.2s;
+        ">✕</button>
+      </div>
+    </div>
+
+    <!-- Folders Container -->
+    <div id="folders-container" style="
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      min-height: 200px;
+    ">
+      <div id="folders-loading" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 14px;
+        padding: 60px 0;
+        text-align: center;
+      ">
+        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📁</div>
+        <div>No custom folders yet</div>
+        <div style="font-size: 12px; margin-top: 4px; opacity: 0.8;">Create a folder to organize your bookmarks</div>
+      </div>
+      <div id="folders-grid" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+      "></div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Folder Modal -->
+  <div id="folder-modal" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+  ">
+    <div style="
+      background: #222;
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #333;
+    ">
+      <h3 id="folder-modal-title" style="margin: 0 0 16px 0; color: #fff; font-size: 18px;">Create New Folder</h3>
+      
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; margin-bottom: 6px; color: #ccc; font-size: 13px;">Folder Name</label>
+        <input id="folder-name-input" type="text" placeholder="Enter folder name..." style="
+          width: 100%;
+          padding: 12px;
+          background: #111;
+          border: 1px solid #333;
+          border-radius: 6px;
+          color: #fff;
+          font-size: 14px;
+          outline: none;
+          transition: all 0.2s;
+        ">
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 6px; color: #ccc; font-size: 13px;">Folder Icon</label>
+        <div id="icon-selector" style="
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 8px;
+          max-height: 120px;
+          overflow-y: auto;
+        ">
+          <div class="icon-option active" data-icon="📁" style="
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+          ">📁</div>
+          <div class="icon-option" data-icon="📂" style="
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+          ">📂</div>
+          <div class="icon-option" data-icon="🗂️" style="
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+          ">🗂️</div>
+          <div class="icon-option" data-icon="💼" style="
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+          ">💼</div>
+          <div class="icon-option" data-icon="🎯" style="
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+          ">🎯</div>
+          <div class="icon-option" data-icon="⭐" style="
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+          ">⭐</div>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button id="cancel-folder-btn" style="
+          padding: 10px 16px;
+          border: none;
+          border-radius: 6px;
+          background: #333;
+          color: #ccc;
+          cursor: pointer;
+          font-size: 13px;
+          transition: all 0.2s;
+        ">Cancel</button>
+        <button id="save-folder-btn" style="
+          padding: 10px 16px;
+          border: none;
+          border-radius: 6px;
+          background: #667eea;
+          color: white;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 500;
+          transition: all 0.2s;
+        ">Create Folder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add to Folder Modal -->
+  <div id="add-to-folder-modal" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;
+  ">
+    <div style="
+      background: #222;
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #333;
+      max-height: 80vh;
+      overflow-y: auto;
+    ">
+      <h3 style="margin: 0 0 16px 0; color: #fff; font-size: 18px;">Add to Folder</h3>
+      <p id="bookmark-title-preview" style="margin: 0 0 16px 0; color: #999; font-size: 13px;"></p>
+      
+      <div style="margin-bottom: 16px;">
+        <div id="folder-list" style="
+          max-height: 300px;
+          overflow-y: auto;
+          border: 1px solid #333;
+          border-radius: 6px;
+          background: #111;
+        ">
+          <div id="no-folders-message" style="
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+          ">
+            No folders available. Create a folder first.
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button id="cancel-add-to-folder-btn" style="
+          padding: 10px 16px;
+          border: none;
+          border-radius: 6px;
+          background: #333;
+          color: #ccc;
+          cursor: pointer;
+          font-size: 13px;
+          transition: all 0.2s;
+        ">Cancel</button>
+      </div>
     </div>
   </div>
 

@@ -9,7 +9,8 @@
     "storage",
     "activeTab",
     "scripting",
-    "system.display"
+    "system.display",
+    "notifications"
   ],
   
   "host_permissions": [

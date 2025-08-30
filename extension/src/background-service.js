@@ -1,68 +1,85 @@
 // Safis Extension Service Worker
 console.log('Safis service worker loaded');
 
-let windowId = null;
+let activeTabId = null;
 
 // Handle extension icon click
 chrome.action.onClicked.addListener(async (tab) => {
   console.log('Extension icon clicked for tab:', tab.url);
   
+  // Check if URL is injectable
+  if (!isInjectableUrl(tab.url)) {
+    console.log('Cannot inject on this URL:', tab.url);
+    showNotificationToUser('Cannot open Safis on this page. Try opening it on a regular website.');
+    return;
+  }
+  
   try {
-    // Check if window already exists
-    if (windowId) {
-      try {
-        const existingWindow = await chrome.windows.get(windowId);
-        if (existingWindow) {
-          // Focus existing window
-          await chrome.windows.update(windowId, { focused: true });
-          console.log('Focused existing window');
-          return;
-        }
-      } catch (error) {
-        console.log('Window no longer exists, creating new one');
-        windowId = null;
-      }
-    }
-
-    // Get screen dimensions
-    const displays = await chrome.system.display.getInfo();
-    const primaryDisplay = displays.find(d => d.isPrimary) || displays[0];
-    
-    const screenWidth = primaryDisplay.workArea.width;
-    const screenHeight = primaryDisplay.workArea.height;
-    
-    // Calculate mini window size and position (compact initial size)
-    const windowWidth = 400; // Compact width
-    const windowHeight = 500; // Compact height
-    const left = screenWidth - windowWidth - 50; // Position near right edge with margin
-    const top = 80; // Position near top with margin
-
-    // Create new window
-    const window = await chrome.windows.create({
-      url: 'window.html',
-      type: 'popup',
-      width: windowWidth,
-      height: windowHeight,
-      left: left,
-      top: top,
-      focused: true
+    // Inject the overlay into the current tab
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['src/modal-injector.js']
     });
     
-    windowId = window.id;
-    console.log('Bookmark manager window opened:', windowId);
+    activeTabId = tab.id;
+    console.log('Overlay injected into tab:', tab.id);
 
   } catch (error) {
-    console.error('Failed to open window:', error);
+    console.error('Failed to inject overlay:', error);
+    showNotificationToUser('Could not open Safis on this page. Try a different website.');
   }
 });
 
-// Handle window closed event
-chrome.windows.onRemoved.addListener((closedWindowId) => {
-  if (closedWindowId === windowId) {
-    console.log('Bookmark manager window closed');
-    windowId = null;
+// Check if URL allows content script injection
+function isInjectableUrl(url) {
+  if (!url) return false;
+  
+  const restrictedProtocols = [
+    'chrome://',
+    'chrome-extension://',
+    'moz-extension://',
+    'safari-extension://',
+    'edge-extension://',
+    'about:',
+    'moz-extension://',
+    'chrome-search://',
+    'chrome-native://',
+    'data:',
+    'file://'
+  ];
+  
+  const restrictedDomains = [
+    'chrome.google.com/webstore',
+    'addons.mozilla.org',
+    'microsoftedge.microsoft.com/addons'
+  ];
+  
+  // Check restricted protocols
+  for (const protocol of restrictedProtocols) {
+    if (url.startsWith(protocol)) {
+      return false;
+    }
   }
-});
+  
+  // Check restricted domains
+  for (const domain of restrictedDomains) {
+    if (url.includes(domain)) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+// Show notification to user when injection fails
+function showNotificationToUser(message) {
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: 'assets/glasses_emoji.png',
+    title: 'Safis Bookmark Manager',
+    message: message
+  });
+}
 
 // Handle messages from content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -88,10 +105,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
   
-  if (request.type === 'REMOVE_BOOKMARK') {
-    chrome.bookmarks.remove(request.id, () => {
-      console.log('Bookmark removed:', request.id);
-      sendResponse({ success: true });
+  if (request.type === 'DELETE_BOOKMARK') {
+    chrome.bookmarks.remove(request.bookmarkId, () => {
+      if (chrome.runtime.lastError) {
+        console.error('Error deleting bookmark:', chrome.runtime.lastError);
+        sendResponse({ success: false, error: chrome.runtime.lastError.message });
+      } else {
+        console.log('Bookmark removed:', request.bookmarkId);
+        sendResponse({ success: true });
+      }
+    });
+    return true;
+  }
+  
+  if (request.type === 'UPDATE_BOOKMARK') {
+    const updateData = {};
+    if (request.title !== undefined) updateData.title = request.title;
+    if (request.url !== undefined) updateData.url = request.url;
+    
+    chrome.bookmarks.update(request.bookmarkId, updateData, (bookmark) => {
+      if (chrome.runtime.lastError) {
+        console.error('Error updating bookmark:', chrome.runtime.lastError);
+        sendResponse({ success: false, error: chrome.runtime.lastError.message });
+      } else {
+        console.log('Bookmark updated:', bookmark);
+        sendResponse({ success: true, bookmark });
+      }
     });
     return true;
   }
