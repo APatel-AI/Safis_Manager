@@ -10,7 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #1F1E1D;
+  background: #0b0b0b;
   color: #C2C0B6;
   line-height: 1.6;
 }
@@ -32,7 +32,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(31, 30, 29, 0.8);
+  background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(10px);
   z-index: 1000;
 }
@@ -53,10 +53,7 @@ body {
   color: #C2C0B6;
 }
 
-.logo img {
-  width: 32px;
-  height: 32px;
-}
+
 
 .nav {
   display: flex;
@@ -68,10 +65,14 @@ body {
   text-decoration: none;
   font-size: 16px;
   transition: color 0.3s ease;
+  
 }
 
 .nav a:hover {
   color: #C2C0B6;
+  text-decoration: underline;
+  transition: 1s ease;
+  
 }
 
 /* Hero Section */
@@ -81,10 +82,9 @@ body {
 }
 
 .hero-icon {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin: 0 auto 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -92,9 +92,8 @@ body {
 }
 
 .hero-icon img {
-  width: 48px;
-  height: 48px;
-  filter: invert(1);
+  width: 100px;
+  height: 100px;
 }
 
 .hero h1 {

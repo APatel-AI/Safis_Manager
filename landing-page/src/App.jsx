@@ -7,7 +7,7 @@ function App() {
         <div className="container">
           <div className="header-content">
             <a href="#" className="logo">
-              <img src="/glasses_emoji.png" alt="Safis" />
+              
               Safis
             </a>
             <nav className="nav">
@@ -24,18 +24,14 @@ function App() {
         <section className="hero">
           <div className="container">
             <div className="hero-icon">
-              <img src="/glasses_emoji.png" alt="Safis Icon" />
+              <img src="dist/assets/glasses_emoji.png" alt="Safis Icon" />
             </div>
-            <h1>Safis: Smart bookmark management for busy professionals</h1>
+            <h1>Bookmark manager for busy professionals</h1>
             <p className="hero-subtitle">
-              Being a professional is challenging — managing multiple projects, clients, and deadlines can make tracking your bookmarks feel like a job in itself. That's exactly why I built Safis, a smart bookmark manager designed to stay out of your way and just work.
+              As a Developer in the early career stage managing multiple projects, clients, and deadlines can make tracking your bookmarks feel like a job in itself. That's exactly why I built Safis, a smart bookmark manager designed to stay out of your way and just work.
             </p>
             <div className="cta-buttons">
               <a href="#install" className="btn-primary">Download for Chrome</a>
-              <a href="#" className="store-badge">
-                <img src="/glasses_emoji.png" alt="Product Hunt" />
-                #1 Product of the Day
-              </a>
             </div>
           </div>
         </section>
