@@ -28,7 +28,7 @@ function App() {
             <h1>Bookmark manager for busy professionals</h1>
             <p className="hero-subtitle">
               As a Developer in the early career stage managing multiple
-              projects, clients, and deadlines can make tracking your bookmarks
+              projects and deadlines can make tracking your bookmarks
               feel like a job in itself. That's exactly why I built Safis, a
               smart bookmark manager designed to stay out of your way and just
               work.
