@@ -1,4 +1,5 @@
 import React from "react";
+import glassesLogo from "./assets/glasses_emoji.png";
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
         <section className="hero">
           <div className="container">
             <div className="hero-icon">
-              <img src="./dist/assets/glasses_emoji.png" alt="Safis Icon" />
+              <img src={glassesLogo} alt="Safis Icon" />
             </div>
             <h1>Bookmark manager for busy professionals</h1>
             <p className="hero-subtitle">
