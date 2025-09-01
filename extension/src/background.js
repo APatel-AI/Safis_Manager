@@ -180,15 +180,6 @@ chrome.action.onClicked.addListener(async (tab) => {
         let currentCategory = 'all';
         let currentView = 'grid';
         let currentSort = 'date';
-        let categories = new Map([
-          ['Work', { icon: '💼', count: 0 }],
-          ['Personal', { icon: '👤', count: 0 }],
-          ['Learning', { icon: '📚', count: 0 }],
-          ['Entertainment', { icon: '🎬', count: 0 }],
-          ['Shopping', { icon: '🛒', count: 0 }],
-          ['News', { icon: '📰', count: 0 }],
-          ['Social', { icon: '👥', count: 0 }]
-        ]);
 
         // Utility functions
         function escapeHtml(text) {
@@ -197,99 +188,6 @@ chrome.action.onClicked.addListener(async (tab) => {
           return div.innerHTML;
         }
 
-        function getCategoryColor(category) {
-          const colors = {
-            'Work': '#667eea',
-            'Personal': '#22C55E', 
-            'Learning': '#3B82F6',
-            'Entertainment': '#F59E0B',
-            'Shopping': '#EC4899',
-            'News': '#EF4444',
-            'Social': '#8B5CF6'
-          };
-          return colors[category] || '#667eea';
-        }
-
-        function detectCategory(title, url) {
-          const titleLower = title.toLowerCase();
-          const urlLower = url.toLowerCase();
-          
-          // Development & Learning
-          if (urlLower.includes('github.com') || urlLower.includes('stackoverflow.com') || 
-              urlLower.includes('codepen.io') || urlLower.includes('jsfiddle.net') ||
-              urlLower.includes('developer.mozilla.org') || urlLower.includes('docs.') ||
-              titleLower.includes('api') || titleLower.includes('documentation') ||
-              titleLower.includes('tutorial') || titleLower.includes('learn') || 
-              titleLower.includes('guide') || titleLower.includes('reference') ||
-              urlLower.includes('coursera.com') || urlLower.includes('udemy.com') ||
-              urlLower.includes('khanacademy.org') || urlLower.includes('edx.org') ||
-              urlLower.includes('freecodecamp.org') || urlLower.includes('pluralsight.com')) {
-            return 'Learning';
-          }
-          
-          // Work & Professional
-          else if (urlLower.includes('linkedin.com') || urlLower.includes('slack.com') || 
-                   urlLower.includes('notion.so') || urlLower.includes('trello.com') ||
-                   urlLower.includes('asana.com') || urlLower.includes('jira.') ||
-                   urlLower.includes('confluence.') || urlLower.includes('teams.microsoft') ||
-                   urlLower.includes('zoom.us') || urlLower.includes('meet.google') ||
-                   urlLower.includes('calendly.com') || urlLower.includes('office.com') ||
-                   titleLower.includes('meeting') || titleLower.includes('project') ||
-                   titleLower.includes('work') || titleLower.includes('office') ||
-                   titleLower.includes('business') || titleLower.includes('corporate')) {
-            return 'Work';
-          }
-          
-          // Entertainment & Media
-          else if (urlLower.includes('youtube.com') || urlLower.includes('netflix.com') || 
-                   urlLower.includes('spotify.com') || urlLower.includes('twitch.tv') ||
-                   urlLower.includes('hulu.com') || urlLower.includes('disney') ||
-                   urlLower.includes('hbo') || urlLower.includes('amazon.com/prime') ||
-                   urlLower.includes('soundcloud.com') || urlLower.includes('vimeo.com') ||
-                   urlLower.includes('gaming') || urlLower.includes('steam') ||
-                   titleLower.includes('video') || titleLower.includes('movie') ||
-                   titleLower.includes('music') || titleLower.includes('podcast') ||
-                   titleLower.includes('game') || titleLower.includes('entertainment')) {
-            return 'Entertainment';
-          }
-          
-          // Shopping & E-commerce
-          else if (urlLower.includes('amazon.com') || urlLower.includes('ebay.com') ||
-                   urlLower.includes('etsy.com') || urlLower.includes('walmart.com') ||
-                   urlLower.includes('target.com') || urlLower.includes('bestbuy.com') ||
-                   urlLower.includes('shop') || urlLower.includes('store') ||
-                   urlLower.includes('marketplace') || urlLower.includes('cart') ||
-                   titleLower.includes('buy') || titleLower.includes('price') ||
-                   titleLower.includes('sale') || titleLower.includes('discount') ||
-                   titleLower.includes('shopping') || titleLower.includes('purchase')) {
-            return 'Shopping';
-          }
-          
-          // News & Information
-          else if (urlLower.includes('news') || urlLower.includes('bbc.com') || 
-                   urlLower.includes('cnn.com') || urlLower.includes('reuters.com') ||
-                   urlLower.includes('nytimes.com') || urlLower.includes('washingtonpost.com') ||
-                   urlLower.includes('guardian.com') || urlLower.includes('wsj.com') ||
-                   urlLower.includes('techcrunch.com') || urlLower.includes('ycombinator.com') ||
-                   urlLower.includes('medium.com') || urlLower.includes('blog') ||
-                   titleLower.includes('breaking') || titleLower.includes('latest') ||
-                   titleLower.includes('headlines') || titleLower.includes('article')) {
-            return 'News';
-          }
-          
-          // Social & Communication
-          else if (urlLower.includes('facebook.com') || urlLower.includes('twitter.com') || 
-                   urlLower.includes('instagram.com') || urlLower.includes('tiktok.com') ||
-                   urlLower.includes('snapchat.com') || urlLower.includes('whatsapp.com') ||
-                   urlLower.includes('telegram.org') || urlLower.includes('discord.com') ||
-                   urlLower.includes('reddit.com') || urlLower.includes('pinterest.com') ||
-                   titleLower.includes('social') || titleLower.includes('chat') ||
-                   titleLower.includes('community') || titleLower.includes('forum')) {
-            return 'Social';
-          }
-          
-          return 'Personal';
-        }
 
         function getFaviconUrl(url) {
           try {
@@ -394,13 +292,11 @@ chrome.action.onClicked.addListener(async (tab) => {
             
             function processBookmarkNode(node, level = 0) {
               if (node.url) {
-                const category = detectCategory(node.title, node.url);
                 allBookmarks.push({
                   id: node.id,
                   title: node.title || 'Untitled',
                   url: node.url,
                   dateAdded: node.dateAdded,
-                  category: category,
                   domain: getDomainFromUrl(node.url),
                   favicon: getFaviconUrl(node.url)
                 });
@@ -419,14 +315,6 @@ chrome.action.onClicked.addListener(async (tab) => {
 
             console.log('Processed bookmarks:', allBookmarks.length);
 
-            // Update category counts
-            categories.forEach((value, key) => value.count = 0);
-            allBookmarks.forEach(bookmark => {
-              if (categories.has(bookmark.category)) {
-                categories.get(bookmark.category).count++;
-              }
-            });
-
             // Hide loading state
             const loadingDiv = modal.querySelector('#bookmarks-loading');
             if (loadingDiv) {
@@ -434,7 +322,6 @@ chrome.action.onClicked.addListener(async (tab) => {
             }
 
             sortBookmarks();
-            updateCategoryList();
             filterBookmarks();
             
           } catch (error) {
@@ -467,80 +354,16 @@ chrome.action.onClicked.addListener(async (tab) => {
           const searchTerm = modal.querySelector('#search-input').value.toLowerCase().trim();
           
           filteredBookmarks = allBookmarks.filter(bookmark => {
-            const matchesCategory = currentCategory === 'all' || bookmark.category === currentCategory;
-            const matchesSearch = !searchTerm || 
+            return !searchTerm || 
               bookmark.title.toLowerCase().includes(searchTerm) ||
               bookmark.url.toLowerCase().includes(searchTerm) ||
               bookmark.domain.toLowerCase().includes(searchTerm);
-            
-            return matchesCategory && matchesSearch;
           });
           
           updateContentHeader();
           displayBookmarks();
         }
 
-        // Update category list
-        function updateCategoryList() {
-          const container = modal.querySelector('#categories-list');
-          const allCount = allBookmarks.length;
-          
-          // Update "All" category count
-          modal.querySelector('#count-all').textContent = allCount;
-          
-          // Add category items
-          categories.forEach((info, category) => {
-            if (info.count > 0) {
-              let categoryEl = modal.querySelector(`#category-${category.toLowerCase()}`);
-              if (!categoryEl) {
-                categoryEl = document.createElement('div');
-                categoryEl.id = `category-${category.toLowerCase()}`;
-                categoryEl.className = 'category-item';
-                categoryEl.style.cssText = `
-                  padding: 10px 12px;
-                  margin-bottom: 4px;
-                  border-radius: 6px;
-                  cursor: pointer;
-                  transition: all 0.2s;
-                  background: transparent;
-                  color: #9B9690;
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                `;
-                
-                categoryEl.innerHTML = `
-                  <span>${info.icon} ${category}</span>
-                  <span style="background: #3E3A35; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${info.count}</span>
-                `;
-                
-                categoryEl.addEventListener('click', () => selectCategory(category.toLowerCase()));
-                container.appendChild(categoryEl);
-              } else {
-                categoryEl.querySelector('span:last-child').textContent = info.count;
-              }
-            }
-          });
-        }
-
-        // Select category
-        function selectCategory(category) {
-          currentCategory = category;
-          
-          // Update active state
-          modal.querySelectorAll('.category-item').forEach(el => {
-            el.style.background = 'transparent';
-            el.style.color = '#9B9690';
-          });
-          
-          const activeEl = modal.querySelector(`#category-${category}`);
-          if (activeEl) {
-            activeEl.style.background = '#667eea';
-            activeEl.style.color = 'white';
-          }
-          
-          filterBookmarks();
-        }
 
         // Update content header
         function updateContentHeader() {
@@ -548,15 +371,8 @@ chrome.action.onClicked.addListener(async (tab) => {
           const subtitle = modal.querySelector('#content-subtitle');
           const count = filteredBookmarks.length;
           
-          if (currentCategory === 'all') {
-            title.textContent = 'All Bookmarks';
-            subtitle.textContent = `${count} bookmark${count !== 1 ? 's' : ''} in your collection`;
-          } else {
-            const categoryInfo = categories.get(currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1));
-            const icon = categoryInfo ? categoryInfo.icon : '📁';
-            title.textContent = `${icon} ${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)}`;
-            subtitle.textContent = `${count} bookmark${count !== 1 ? 's' : ''} in this category`;
-          }
+          title.textContent = 'All Bookmarks';
+          subtitle.textContent = `${count} bookmark${count !== 1 ? 's' : ''} in your collection`;
         }
 
         // Display bookmarks
@@ -650,10 +466,6 @@ chrome.action.onClicked.addListener(async (tab) => {
                 </div>
               </div>
               
-              <!-- Category Badge -->
-              <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(102, 126, 234, 0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 9px; font-weight: 500; backdrop-filter: blur(10px);">
-                ${categories.get(bookmark.category)?.icon || '📁'} ${bookmark.category}
-              </div>
             `;
             
             // Hover effects with preview
@@ -748,13 +560,8 @@ chrome.action.onClicked.addListener(async (tab) => {
               </div>
               
               <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
-                  <div style="font-size: 14px; font-weight: 500; color: #C2C0B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">
-                    ${escapeHtml(bookmark.title)}
-                  </div>
-                  <div style="background: ${getCategoryColor(bookmark.category)}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; flex-shrink: 0;">
-                    ${categories.get(bookmark.category)?.icon || '📁'}
-                  </div>
+                <div style="font-size: 14px; font-weight: 500; color: #C2C0B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">
+                  ${escapeHtml(bookmark.title)}
                 </div>
                 
                 <div style="font-size: 12px; color: #9B9690; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -915,22 +722,6 @@ chrome.action.onClicked.addListener(async (tab) => {
             }
           });
           
-          // Category-based suggestions
-          categories.forEach((info, category) => {
-            if (category.toLowerCase().includes(termLower)) {
-              const matchingBookmarks = allBookmarks.filter(b => b.category === category);
-              if (matchingBookmarks.length > 0) {
-                suggestions.push({
-                  text: `${info.icon} ${category} bookmarks`,
-                  query: '',
-                  icon: info.icon,
-                  count: matchingBookmarks.length,
-                  type: 'category',
-                  category: category
-                });
-              }
-            }
-          });
           
           // Partial title matches
           const titleMatches = new Set();
@@ -1070,8 +861,8 @@ chrome.action.onClicked.addListener(async (tab) => {
           // Update header info
           titleEl.textContent = bookmark.title;
           urlEl.textContent = bookmark.domain;
-          categoryEl.textContent = `${categories.get(bookmark.category)?.icon || '📁'} ${bookmark.category}`;
-          categoryEl.style.background = getCategoryColor(bookmark.category);
+          categoryEl.textContent = '📁 Bookmark';
+          categoryEl.style.background = '#667eea';
           
           // Update favicon
           if (bookmark.favicon) {
@@ -1186,14 +977,7 @@ chrome.action.onClicked.addListener(async (tab) => {
           const sameDomainBookmarks = allBookmarks.filter(b => 
             b.domain === currentDomain && b.url !== currentUrl
           );
-          recommendations.push(...sameDomainBookmarks.slice(0, 3));
-          
-          // Same category as current page
-          const currentCategory = detectCategory(document.title, currentUrl);
-          const sameCategoryBookmarks = allBookmarks.filter(b => 
-            b.category === currentCategory && b.domain !== currentDomain
-          );
-          recommendations.push(...sameCategoryBookmarks.slice(0, 2));
+          recommendations.push(...sameDomainBookmarks.slice(0, 5));
           
           return recommendations.slice(0, 5);
         }
@@ -1203,18 +987,10 @@ chrome.action.onClicked.addListener(async (tab) => {
           const bookmark = allBookmarks.find(b => b.id === id);
           if (!bookmark) return;
           
-          const newCategory = prompt(`Edit category for "${bookmark.title}":`, bookmark.category || 'Personal');
-          if (newCategory !== null && newCategory.trim() !== '') {
-            const categoryName = newCategory.trim();
-            
-            // Add to categories if new
-            if (!categories.has(categoryName)) {
-              categories.set(categoryName, { icon: '📁', count: 0 });
-            }
-            
-            bookmark.category = categoryName;
-            showNotification('Category updated successfully!', 'success');
-            loadBookmarks(); // Refresh to update counts
+          const newTitle = prompt(`Edit bookmark title:`, bookmark.title);
+          if (newTitle !== null && newTitle.trim() !== '') {
+            // This would require implementing bookmark update in background script
+            showNotification('Edit functionality coming soon!', 'info');
           }
         };
 
@@ -1318,12 +1094,10 @@ chrome.action.onClicked.addListener(async (tab) => {
           // Add bookmark button
           modal.querySelector('#add-bookmark-btn').addEventListener('click', async () => {
             try {
-              const category = detectCategory(document.title, window.location.href);
               const response = await chrome.runtime.sendMessage({
                 type: 'ADD_BOOKMARK',
                 title: document.title,
-                url: window.location.href,
-                category: category
+                url: window.location.href
               });
               
               if (response.success) {
@@ -1376,8 +1150,6 @@ chrome.action.onClicked.addListener(async (tab) => {
             filterBookmarks();
           });
 
-          // Category selection
-          modal.querySelector('#category-all').addEventListener('click', () => selectCategory('all'));
 
           // Hover effects for buttons
           const buttons = modal.querySelectorAll('button');
@@ -1443,12 +1215,10 @@ chrome.action.onClicked.addListener(async (tab) => {
                 title: 'Test Bookmark',
                 url: 'https://example.com',
                 dateAdded: Date.now(),
-                category: 'Personal',
                 domain: 'example.com',
                 favicon: 'https://www.google.com/s2/favicons?domain=example.com&sz=64'
               }];
               filteredBookmarks = [...allBookmarks];
-              updateCategoryList();
               displayBookmarks();
               console.log('Test bookmark added and displayed');
             }
@@ -1465,7 +1235,7 @@ chrome.action.onClicked.addListener(async (tab) => {
 });
 
 // Enhanced message listener
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.type === 'GET_BOOKMARKS') {
     chrome.bookmarks.getTree((bookmarkTreeNodes) => {
       sendResponse({ bookmarks: bookmarkTreeNodes });
@@ -1479,11 +1249,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       title: request.title,
       url: request.url
     }, (bookmark) => {
-      if (request.category) {
-        chrome.storage.local.set({
-          [`bookmark_${bookmark.id}_category`]: request.category
-        });
-      }
       sendResponse({ success: true, bookmark });
     });
     return true;
@@ -1491,18 +1256,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   if (request.type === 'REMOVE_BOOKMARK') {
     chrome.bookmarks.remove(request.id, () => {
-      chrome.storage.local.remove(`bookmark_${request.id}_category`);
       sendResponse({ success: true });
     });
     return true;
   }
   
-  if (request.type === 'UPDATE_BOOKMARK_CATEGORY') {
-    chrome.storage.local.set({
-      [`bookmark_${request.id}_category`]: request.category
-    }, () => {
-      sendResponse({ success: true });
-    });
-    return true;
-  }
 });
