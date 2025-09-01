@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import glassesLogo from "./assets/glasses_emoji.png";
+import demoVideo from "./assets/demo.mov";
 import { EMAIL_CONFIG } from "./config";
 
 function App() {
@@ -109,8 +110,8 @@ function App() {
                 className="demo-recording"
                 poster=""
               >
-                <source src="./dist/assets/demo.mov" type="video/quicktime" />
-                <source src="./dist/assets/demo.mov" type="video/mp4" />
+                <source src={demoVideo} type="video/quicktime" />
+                <source src={demoVideo} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
