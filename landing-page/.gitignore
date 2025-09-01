@@ -6,8 +6,13 @@ npm-debug.log*
 dist/
 build/
 
-# Environment variables and config
-src/config.js
+# Environment variables
+.env
+.env.local
+.env.production.local
+
+# Local config overrides
+src/config.local.js
 
 # IDE
 .vscode/
