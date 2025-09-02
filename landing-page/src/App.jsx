@@ -64,6 +64,13 @@ function App() {
     }
   };
 
+  const scrollToFooter = (e) => {
+    e.preventDefault();
+    document.querySelector('.footer').scrollIntoView({
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <div className="App">
       <header className="header">
@@ -74,7 +81,7 @@ function App() {
             </a>
             <nav className="nav">
               <a href="#install">Install</a>
-              <a href="#contact">Contact</a>
+              <a href="#footer" onClick={scrollToFooter}>Contact</a>
             </nav>
           </div>
         </div>
@@ -189,7 +196,7 @@ function App() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2024 Safis. All rights reserved.</p>
+            <p>&copy; 2025 Safis. All rights reserved.</p>
           </div>
         </div>
       </footer>
