@@ -7,7 +7,8 @@
   "permissions": [
     "bookmarks",
     "scripting",
-    "notifications"
+    "notifications",
+    "storage"
   ],
   
   "host_permissions": [
@@ -38,7 +39,7 @@
   
   "web_accessible_resources": [
     {
-      "resources": ["src/modal-injector.js", "src/bookmark-api.js", "assets/*", "window.html", "src/window-script.js"],
+      "resources": ["src/modal-injector.js", "src/bookmark-api.js", "src/styles.css", "assets/*", "window.html", "src/window-script.js"],
       "matches": ["<all_urls>"]
     }
   ]

@@ -29,20 +29,21 @@ function createSafisOverlay() {
   try {
     overlay = document.createElement('div');
     overlay.id = 'safis-overlay';
-    overlay.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 2147483647 !important; backdrop-filter: blur(8px) !important;';
+    overlay.className = 'safis-overlay';
 
     // Create modal
     modal = document.createElement('div');
     modal.id = 'safis-modal';
-    modal.style.cssText = 'width: 850px !important; height: 580px !important; max-width: 95vw !important; max-height: 90vh !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 12px !important; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif !important; color: #e5e5e5 !important; display: flex !important; overflow: hidden !important; backdrop-filter: blur(20px) !important; position: relative !important;';
+    // Modal styles are now handled by CSS classes
 
     // Create modal content
     modal.innerHTML = createModalHTML();
 
-    // Add styles
-    const style = document.createElement('style');
-    style.textContent = createModalCSS();
-    document.head.appendChild(style);
+    // Add external CSS file
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = chrome.runtime.getURL('src/styles.css');
+    document.head.appendChild(link);
 
     // Assemble and display
     overlay.appendChild(modal);
@@ -69,9 +70,14 @@ function createSafisOverlay() {
     });
     
     console.log('Loading custom folders asynchronously...');
-    loadCustomFolders().catch(error => {
-      console.error('Failed to load custom folders:', error);
-    });
+    // Make sure custom folders load with higher priority and better error handling
+    setTimeout(() => {
+      loadCustomFolders().catch(error => {
+        console.error('Failed to load custom folders:', error);
+        // Ensure displayFolders is called even on complete failure
+        displayFolders();
+      });
+    }, 100); // Small delay to ensure DOM is ready
     
     console.log('Safis bookmark modal initialized successfully');
   } catch (error) {
@@ -164,346 +170,7 @@ function createSafisOverlay() {
     `;
   }
 
-  function createModalCSS() {
-    return `
-      /* Lightweight CSS Icons */
-      .css-icon {
-        width: 18px;
-        height: 18px;
-        position: relative;
-        color: #666;
-        opacity: 0.8;
-        transition: all 0.2s ease;
-        display: inline-block;
-      }
-      
-      .icon-small {
-        width: 14px;
-        height: 14px;
-      }
-      
-      /* Search Icon - Magnifying Glass */
-      .icon-search::before {
-        content: '';
-        position: absolute;
-        width: 10px;
-        height: 10px;
-        border: 2px solid currentColor;
-        border-radius: 50%;
-        top: 1px;
-        left: 1px;
-      }
-      .icon-search::after {
-        content: '';
-        position: absolute;
-        width: 2px;
-        height: 6px;
-        background: currentColor;
-        transform: rotate(45deg);
-        top: 9px;
-        left: 9px;
-        border-radius: 1px;
-      }
-      
-      /* Plus Icon */
-      .icon-plus::before {
-        content: '';
-        position: absolute;
-        width: 12px;
-        height: 2px;
-        background: currentColor;
-        top: 8px;
-        left: 3px;
-        border-radius: 1px;
-      }
-      .icon-plus::after {
-        content: '';
-        position: absolute;
-        width: 2px;
-        height: 12px;
-        background: currentColor;
-        top: 3px;
-        left: 8px;
-        border-radius: 1px;
-      }
-      
-      /* Bookmarks Icon - Multiple rectangles */
-      .icon-bookmarks::before {
-        content: '';
-        position: absolute;
-        width: 10px;
-        height: 12px;
-        border: 2px solid currentColor;
-        border-radius: 2px;
-        top: 2px;
-        left: 2px;
-        background: transparent;
-      }
-      .icon-bookmarks::after {
-        content: '';
-        position: absolute;
-        width: 6px;
-        height: 2px;
-        background: currentColor;
-        top: 5px;
-        left: 4px;
-        border-radius: 1px;
-        box-shadow: 0 3px 0 currentColor, 0 6px 0 currentColor;
-      }
-      
-      /* Folder Icon */
-      .icon-folder::before {
-        content: '';
-        position: absolute;
-        width: 4px;
-        height: 2px;
-        background: currentColor;
-        top: 4px;
-        left: 2px;
-        border-radius: 1px 1px 0 0;
-      }
-      .icon-folder::after {
-        content: '';
-        position: absolute;
-        width: 12px;
-        height: 8px;
-        border: 2px solid currentColor;
-        border-radius: 0 2px 2px 2px;
-        top: 6px;
-        left: 2px;
-        background: transparent;
-      }
-      
-      /* Grid Icon */
-      .icon-grid::before {
-        content: '';
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: currentColor;
-        top: 2px;
-        left: 2px;
-        border-radius: 1px;
-        box-shadow: 6px 0 0 currentColor, 0 6px 0 currentColor, 6px 6px 0 currentColor;
-      }
-      
-      /* List Icon */
-      .icon-list::before {
-        content: '';
-        position: absolute;
-        width: 10px;
-        height: 2px;
-        background: currentColor;
-        top: 3px;
-        left: 4px;
-        border-radius: 1px;
-        box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
-      }
-      .icon-list::after {
-        content: '';
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: currentColor;
-        top: 3px;
-        left: 1px;
-        border-radius: 50%;
-        box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
-      }
-      
-      /* Dots Icon - Vertical Menu */
-      .icon-dots::before {
-        content: '';
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: currentColor;
-        border-radius: 50%;
-        top: 2px;
-        left: 6px;
-        box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
-      }
-      
-      @keyframes spin { to { transform: rotate(360deg); } }
-      
-      
-      .sidebar-icon {
-        width: 42px !important;
-        height: 42px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        cursor: pointer !important;
-        border-radius: 6px !important;
-        transition: all 0.2s ease !important;
-        background: transparent !important;
-      }
-      
-      .sidebar-icon:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-      }
-      
-      .sidebar-icon:hover .css-icon {
-        color: #aaa !important;
-        opacity: 1 !important;
-        transform: scale(1.1);
-      }
-      
-      #modal-header:hover {
-        background: rgba(102, 126, 234, 0.1) !important;
-        transform: scale(1.05);
-      }
-      
-      .sidebar-icon.active {
-        background: rgba(102, 126, 234, 0.15) !important;
-      }
-      
-      .sidebar-icon.active .css-icon {
-        color: #667eea !important;
-        opacity: 1 !important;
-      }
-      
-      .view-icon {
-        width: 28px !important;
-        height: 28px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        cursor: pointer !important;
-        border-radius: 4px !important;
-        transition: all 0.2s ease !important;
-        background: transparent !important;
-      }
-      
-      .view-icon:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-      }
-      
-      .view-icon:hover .css-icon {
-        color: #aaa !important;
-        opacity: 1 !important;
-        transform: scale(1.1);
-      }
-      
-      .view-icon.active {
-        background: rgba(255, 255, 255, 0.1) !important;
-      }
-      
-      .view-icon.active .css-icon {
-        color: #fff !important;
-        opacity: 1 !important;
-      }
-      
-      .sort-btn {
-        padding: 6px 12px !important;
-        border: none !important;
-        border-radius: 6px !important;
-        font-size: 12px !important;
-        font-weight: 500 !important;
-        cursor: pointer !important;
-        transition: all 0.2s !important;
-        background: rgba(255, 255, 255, 0.05) !important;
-        color: #888 !important;
-      }
-      
-      .sort-btn:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: #ccc !important;
-      }
-      
-      .sort-btn.active {
-        background: #333 !important;
-        color: #fff !important;
-      }
-      
-      #safis-close:hover {
-        background: rgba(255, 255, 255, 0.2) !important;
-        color: #fff !important;
-      }
-      
-      #search-input:focus {
-        border-color: #667eea !important;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
-      }
-      
-      #safis-modal *::-webkit-scrollbar {
-        width: 6px !important;
-      }
-      
-      #safis-modal *::-webkit-scrollbar-track {
-        background: transparent !important;
-      }
-      
-      #safis-modal *::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border-radius: 3px !important;
-      }
-      
-      #safis-modal *::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.4) !important;
-      }
-      
-      .menu-trigger:hover {
-        background: rgba(255, 255, 255, 0.2) !important;
-        color: #ccc !important;
-      }
-      
-      .menu-trigger:hover .css-icon {
-        color: #ccc !important;
-        opacity: 1 !important;
-      }
-      
-      .menu-item:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: #fff !important;
-      }
-      
-      .menu-item:last-child {
-        border-bottom: none !important;
-      }
-
-      /* Ensure dropdowns are always on top */
-      .menu-dropdown.menu-active {
-        z-index: 2147483647 !important;
-        position: absolute !important;
-        transform: translateZ(0) !important;
-      }
-      
-      /* Force stacking context for active bookmark items */
-      .menu-item-active {
-        z-index: 2147483647 !important;
-        position: relative !important;
-        transform: translateZ(0) !important;
-      }
-      
-      /* Override any transforms on active items */
-      .menu-item-active .bookmark-menu {
-        z-index: 2147483647 !important;
-        position: relative !important;
-      }
-
-      /* List view action buttons */
-      .action-btn:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
-      }
-
-      .action-btn.edit-bookmark:hover {
-        background: rgba(102, 126, 234, 0.3) !important;
-        color: #8fa4f3 !important;
-      }
-
-      .action-btn.add-to-folder:hover {
-        background: rgba(255, 193, 7, 0.3) !important;
-        color: #ffd54f !important;
-      }
-
-      .action-btn.delete-bookmark:hover {
-        background: rgba(220, 53, 69, 0.3) !important;
-        color: #f56565 !important;
-      }
-    `;
-  }
+  // CSS is now loaded from external file (styles.css)
 
   // Event handlers
   function setupEventListeners() {
@@ -755,7 +422,7 @@ function createSafisOverlay() {
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
             <div style="font-size: 24px;">📁</div>
             <div class="folder-menu" style="position: relative; opacity: 0; transition: opacity 0.2s;">
-              <button class="folder-menu-trigger" data-folder-id="${folder.id}" style="width: 24px; height: 24px; border: none; background: rgba(255, 255, 255, 0.1); color: #999; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Options">
+              <button class="folder-menu-trigger" data-folder-id="${folder.id}" style="padding:2px; width: 24px; height: 24px; border: none; background: rgba(255, 255, 255, 0.1); color: #999; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Options">
                 <div class="css-icon icon-dots icon-small"></div>
               </button>
               <div class="folder-dropdown" style="position: absolute; top: 100%; right: 0; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 120px; display: none;">
@@ -883,31 +550,10 @@ function createSafisOverlay() {
     // Create modal
     const folderModal = document.createElement('div');
     folderModal.id = 'folder-modal';
-    folderModal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2147483649;
-      backdrop-filter: blur(8px);
-    `;
+    folderModal.className = 'safis-modal-overlay';
 
     const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      padding: 24px;
-      width: 400px;
-      max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-      backdrop-filter: blur(24px);
-    `;
+    modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
@@ -943,13 +589,13 @@ function createSafisOverlay() {
         ">Cancel</button>
         <button id="save-folder-btn" style="
           padding: 10px 20px;
-          border: none;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
+          border: 1px;
+          background: #000000;
           border-radius: 8px;
           cursor: pointer;
           font-size: 14px;
           font-weight: 500;
+          color: white;
           transition: all 0.2s;
         ">${isEdit ? 'Save Changes' : 'Create Folder'}</button>
       </div>
@@ -1112,16 +758,7 @@ function createSafisOverlay() {
     `;
 
     const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      padding: 24px;
-      width: 400px;
-      max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-      backdrop-filter: blur(24px);
-    `;
+    modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
       <div style="margin-bottom: 20px; text-align: center;">
@@ -1227,31 +864,10 @@ function createSafisOverlay() {
     // Create modal
     const folderModal = document.createElement('div');
     folderModal.id = 'folder-modal';
-    folderModal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2147483649;
-      backdrop-filter: blur(8px);
-    `;
+    folderModal.className = 'safis-modal-overlay';
 
     const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      padding: 24px;
-      width: 400px;
-      max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-      backdrop-filter: blur(24px);
-    `;
+    modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
@@ -1291,8 +907,8 @@ function createSafisOverlay() {
         ">Cancel</button>
         <button id="save-folder-btn" style="
           padding: 10px 20px;
-          border: none;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: 1px;
+          background: #000000;
           color: white;
           border-radius: 8px;
           cursor: pointer;
@@ -1456,16 +1072,7 @@ function createSafisOverlay() {
     `;
 
     const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      padding: 24px;
-      width: 400px;
-      max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-      backdrop-filter: blur(24px);
-    `;
+    modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
       <div style="margin-bottom: 20px; text-align: center;">
@@ -1556,20 +1163,7 @@ function createSafisOverlay() {
     // Create folder dropdown
     const dropdown = document.createElement('div');
     dropdown.id = 'folder-dropdown';
-    dropdown.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 320px;
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1);
-      z-index: 2147483648;
-      overflow: hidden;
-      backdrop-filter: blur(24px);
-    `;
+    dropdown.className = 'folder-dropdown';
     
     // Create dropdown content
     const foldersHTML = customFolders.map(folder => `
@@ -1765,7 +1359,7 @@ function createSafisOverlay() {
     filteredBookmarks.forEach(bookmark => {
       const card = document.createElement('div');
       card.className = 'bookmark-card';
-      card.style.cssText = 'background: linear-gradient(135deg, #222 0%, #111 100%); border: 1px solid #333; border-radius: 10px; padding: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;';
+      card.className = 'bookmark-card';
       
       const faviconHtml = bookmark.favicon ? 
         '<img src="' + bookmark.favicon + '" style="width: 32px; height: 32px; border-radius: 6px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';"><div style="display: none; font-size: 28px; opacity: 0.7;">🌐</div>' :
@@ -1853,7 +1447,7 @@ function createSafisOverlay() {
     filteredBookmarks.forEach(bookmark => {
       const item = document.createElement('div');
       item.className = 'bookmark-list-item';
-      item.style.cssText = 'display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: linear-gradient(135deg, #222 0%, #111 100%); border: 1px solid #333; border-radius: 10px; transition: all 0.2s ease; cursor: pointer; min-height: 64px; position: relative;';
+      item.className = 'bookmark-item';
       
       const faviconHtml = bookmark.favicon ? 
         '<img src="' + bookmark.favicon + '" style="width: 24px; height: 24px; border-radius: 6px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';"><div style="display: none; color: #888; font-size: 20px; width: 24px; height: 24px; align-items: center; justify-content: center;">🌐</div>' :
@@ -2133,16 +1727,7 @@ function createSafisOverlay() {
     `;
 
     const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      padding: 24px;
-      width: 400px;
-      max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-      backdrop-filter: blur(24px);
-    `;
+    modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
@@ -2178,13 +1763,13 @@ function createSafisOverlay() {
         ">Cancel</button>
         <button id="save-edit-btn" style="
           padding: 10px 20px;
-          border: none;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
+          border: 1px;
+          background: #000000;
           border-radius: 8px;
           cursor: pointer;
           font-size: 14px;
           font-weight: 500;
+          color: white;
           transition: all 0.2s;
         ">Save Changes</button>
       </div>
@@ -2290,16 +1875,7 @@ function createSafisOverlay() {
     `;
 
     const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
-      border: 1px solid #444;
-      border-radius: 16px;
-      padding: 24px;
-      width: 400px;
-      max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-      backdrop-filter: blur(24px);
-    `;
+    modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
       <div style="margin-bottom: 20px; text-align: center;">
@@ -2458,29 +2034,57 @@ function createSafisOverlay() {
       if (!chrome?.storage?.local) {
         console.warn('Chrome storage API not available');
         customFolders = [];
+        displayFolders();
         return;
       }
 
-      // First, load existing folders from extension storage
+      // First, load existing folders from extension storage with retry mechanism
       console.log('Loading existing folders from extension storage...');
-      const result = await chrome.storage.local.get(['customFolders']);
+      let result;
+      try {
+        result = await chrome.storage.local.get(['customFolders']);
+      } catch (storageError) {
+        console.warn('First storage read failed, retrying...', storageError);
+        // Retry once after a short delay
+        await new Promise(resolve => setTimeout(resolve, 200));
+        result = await chrome.storage.local.get(['customFolders']);
+      }
+      
       customFolders = result.customFolders || [];
       console.log('Loaded custom folders from extension storage:', customFolders.length);
       
+      // Display folders immediately to show what's already saved
+      if (customFolders.length > 0) {
+        console.log('Displaying saved folders immediately');
+        displayFolders();
+      }
+      
       // Then sync any new folders from Chrome bookmarks via background script
       console.log('Starting Chrome bookmarks sync...');
-      await syncFromChromeBookmarks();
-      console.log('Total folders after Chrome sync:', customFolders.length);
+      try {
+        await syncFromChromeBookmarks();
+        console.log('Total folders after Chrome sync:', customFolders.length);
+      } catch (syncError) {
+        console.warn('Chrome bookmarks sync failed, continuing with saved folders:', syncError);
+      }
       
-      // Display the folders in UI
-      console.log('Displaying folders in UI...');
+      // Final display of all folders (saved + synced)
+      console.log('Displaying all folders in UI...');
       displayFolders();
       console.log('=== LOAD CUSTOM FOLDERS COMPLETE ===');
       
     } catch (error) {
       console.error('Failed to load custom folders:', error);
-      customFolders = [];
-      // Still try to display empty folders
+      // Initialize with empty array but still try to load from storage one more time
+      try {
+        const fallbackResult = await chrome.storage.local.get(['customFolders']);
+        customFolders = fallbackResult.customFolders || [];
+        console.log('Fallback storage read successful:', customFolders.length, 'folders');
+      } catch (fallbackError) {
+        console.error('Fallback storage read also failed:', fallbackError);
+        customFolders = [];
+      }
+      // Always display folders, even if empty
       displayFolders();
     }
   }
@@ -2973,20 +2577,52 @@ function createSafisOverlay() {
           btn.style.borderColor = '#22c55e';
           btn.style.color = '#22c55e';
           
-          // Refresh the folder display
-          displayFolders();
-          
-          // Auto-close after successful import
-          setTimeout(() => {
-            closeModal();
-          }, 1000);
+          // Wait for storage to be saved before refreshing display
+          setTimeout(async () => {
+            try {
+              // Verify the folder was saved
+              const result = await chrome.storage.local.get(['customFolders']);
+              const savedFolders = result.customFolders || [];
+              console.log('Verifying saved folders after import:', savedFolders.length);
+              
+              // Update local state to match storage
+              customFolders = savedFolders;
+              
+              // Refresh the folder display
+              displayFolders();
+              
+              showNotification(`Successfully imported "${folderName}"! Folder will persist after extension restart.`, 'success');
+              
+              // Auto-close after successful import and verification
+              setTimeout(() => {
+                closeModal();
+              }, 1500);
+            } catch (verifyError) {
+              console.error('Error verifying import:', verifyError);
+              // Still show the folders even if verification fails
+              displayFolders();
+              setTimeout(() => {
+                closeModal();
+              }, 1000);
+            }
+          }, 300);
           
         } catch (error) {
           btn.textContent = 'Error';
           btn.style.background = 'rgba(239, 68, 68, 0.2)';
           btn.style.borderColor = '#ef4444';
           btn.style.color = '#ef4444';
-          showNotification(`Failed to import "${folderName}"`, 'error');
+          btn.disabled = false; // Re-enable for retry
+          showNotification(`Failed to import "${folderName}": ${error.message}`, 'error');
+          console.error('Import error details:', error);
+          
+          // Reset button after 3 seconds to allow retry
+          setTimeout(() => {
+            btn.textContent = 'Import';
+            btn.style.background = 'rgba(102, 126, 234, 0.2)';
+            btn.style.borderColor = '#667eea';
+            btn.style.color = '#667eea';
+          }, 3000);
         }
       });
     });
@@ -3066,8 +2702,28 @@ function createSafisOverlay() {
       // Add to customFolders
       customFolders.push(extensionFolder);
       
-      // Save to storage
-      await chrome.storage.local.set({ customFolders });
+      // Save to storage with error handling and retry mechanism
+      try {
+        await chrome.storage.local.set({ customFolders });
+        console.log('Custom folders saved to storage successfully');
+      } catch (storageError) {
+        console.error('Failed to save to storage, retrying...', storageError);
+        // Retry once after a short delay
+        setTimeout(async () => {
+          try {
+            await chrome.storage.local.set({ customFolders });
+            console.log('Custom folders saved to storage on retry');
+          } catch (retryError) {
+            console.error('Failed to save to storage even on retry', retryError);
+          }
+        }, 500);
+      }
+      
+      // Force a refresh of the folders display to ensure persistence
+      setTimeout(() => {
+        console.log('Refreshing folders display after import');
+        displayFolders();
+      }, 100);
       
       console.log(`Imported folder "${folderName}" with ${folderBookmarks.length} bookmarks`);
       return extensionFolder;

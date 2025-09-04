@@ -1,0 +1,841 @@
+/**
+ * Safis Bookmark Manager - Extension Styles
+ * 
+ * Organized and structured CSS for the Safis bookmark extension
+ * This file contains all styles for modals, components, and UI elements
+ */
+
+/* ========================================
+   CSS RESET & GLOBAL STYLES
+   ======================================== */
+
+/* Ensure consistent styling across all elements */
+#safis-modal * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#safis-modal {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+  color: #e5e5e5 !important;
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   MAIN MODAL STRUCTURE
+   ======================================== */
+
+/* Modal overlay - covers the entire viewport */
+.safis-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2147483647 !important;
+  backdrop-filter: blur(8px) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Main modal container */
+#safis-modal {
+  width: 850px !important;
+  height: 580px !important;
+  max-width: 95vw !important;
+  max-height: 90vh !important;
+  background: #1a1a1a !important;
+  border: 1px solid #333 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important;
+  display: flex !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(20px) !important;
+  position: relative !important;
+  animation: fadeIn 0.3s ease !important;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+#safis-modal *::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+#safis-modal *::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+#safis-modal *::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 3px !important;
+}
+
+#safis-modal *::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ========================================
+   CSS ICONS SYSTEM
+   ======================================== */
+
+/* Base CSS icon styling */
+.css-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  color: rgb(255, 255, 255);
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.icon-small {
+  width: 14px;
+  height: 14px;
+}
+
+/* Search Icon - Magnifying Glass */
+.icon-search::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  top: 1px;
+  left: 1px;
+}
+
+.icon-search::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 6px;
+  background: currentColor;
+  transform: rotate(45deg);
+  top: 9px;
+  left: 9px;
+  border-radius: 1px;
+}
+
+/* Plus Icon */
+.icon-plus::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  background: currentColor;
+  top: 8px;
+  left: 3px;
+  border-radius: 1px;
+}
+
+.icon-plus::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: currentColor;
+  top: 3px;
+  left: 8px;
+  border-radius: 1px;
+}
+
+/* Bookmarks Icon - Multiple rectangles */
+.icon-bookmarks::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  top: 2px;
+  left: 2px;
+  background: transparent;
+}
+
+.icon-bookmarks::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 2px;
+  background: currentColor;
+  top: 5px;
+  left: 4px;
+  border-radius: 1px;
+  box-shadow: 0 3px 0 currentColor, 0 6px 0 currentColor;
+}
+
+/* Folder Icon */
+.icon-folder::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 2px;
+  background: currentColor;
+  top: 4px;
+  left: 2px;
+  border-radius: 1px 1px 0 0;
+}
+
+.icon-folder::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 8px;
+  border: 2px solid currentColor;
+  border-radius: 0 2px 2px 2px;
+  top: 6px;
+  left: 2px;
+  background: transparent;
+}
+
+/* Grid Icon */
+.icon-grid::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  top: 2px;
+  left: 2px;
+  border-radius: 1px;
+  box-shadow: 6px 0 0 currentColor, 0 6px 0 currentColor, 6px 6px 0 currentColor;
+}
+
+/* List Icon */
+.icon-list::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  background: currentColor;
+  top: 3px;
+  left: 4px;
+  border-radius: 1px;
+  box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
+}
+
+.icon-list::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: currentColor;
+  top: 3px;
+  left: 1px;
+  border-radius: 50%;
+  box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
+}
+
+/* Dots Icon - Vertical Menu */
+.icon-dots::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 50%;
+  top: 2px;
+  left: 6px;
+  box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
+}
+
+/* ========================================
+   SIDEBAR & NAVIGATION
+   ======================================== */
+
+/* Sidebar icon containers */
+.sidebar-icon {
+  width: 42px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+.sidebar-icon:hover {
+  background: #000000 !important;
+}
+
+.sidebar-icon:hover .css-icon {
+  color: #aaa !important;
+  opacity: 1 !important;
+  transform: scale(1.1);
+}
+
+.sidebar-icon.active {
+  background: #000000 !important;
+}
+
+.sidebar-icon.active .css-icon {
+  color: #eb5939 !important;
+  opacity: 1 !important;
+}
+
+/* Modal header styling */
+#modal-header:hover {
+  background: rgba(102, 126, 234, 0.1) !important;
+  transform: scale(1.05);
+}
+
+/* ========================================
+   VIEW CONTROLS & BUTTONS
+   ======================================== */
+
+/* View toggle icons (grid/list) */
+.view-icon {
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+.view-icon:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.view-icon:hover .css-icon {
+  color: #aaa !important;
+  opacity: 1 !important;
+  transform: scale(1.1);
+}
+
+.view-icon.active {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.view-icon.active .css-icon {
+  color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* Sort buttons */
+.sort-btn {
+  padding: 6px 12px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #888 !important;
+}
+
+.sort-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ccc !important;
+}
+
+.sort-btn.active {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+/* Close button */
+#safis-close:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+
+/* Search input styling */
+#search-input:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Primary action buttons */
+#save-folder-btn:hover {
+  border-color: #eb5939 !important;
+}
+
+#save-edit-btn:hover {
+  border-color: #eb5939 !important;
+}
+
+/* ========================================
+   MENU & DROPDOWN STYLES
+   ======================================== */
+
+/* Menu trigger buttons */
+.menu-trigger:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ccc !important;
+}
+
+.menu-trigger:hover .css-icon {
+  color: #ccc !important;
+  opacity: 1 !important;
+}
+
+/* Menu items */
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+.menu-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Dropdown z-index and positioning */
+.menu-dropdown.menu-active {
+  z-index: 2147483647 !important;
+  position: absolute !important;
+  transform: translateZ(0) !important;
+}
+
+/* Force stacking context for active bookmark items */
+.menu-item-active {
+  z-index: 2147483647 !important;
+  position: relative !important;
+  transform: translateZ(0) !important;
+}
+
+/* Override any transforms on active items */
+.menu-item-active .bookmark-menu {
+  z-index: 2147483647 !important;
+  position: relative !important;
+}
+
+/* ========================================
+   ACTION BUTTONS
+   ======================================== */
+
+/* Base action button hover effect */
+.action-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Edit bookmark button */
+.action-btn.edit-bookmark:hover {
+  background: rgba(102, 126, 234, 0.3) !important;
+  color: #8fa4f3 !important;
+}
+
+/* Add to folder button */
+.action-btn.add-to-folder:hover {
+  background: rgba(255, 193, 7, 0.3) !important;
+  color: #ffd54f !important;
+}
+
+/* Delete bookmark button */
+.action-btn.delete-bookmark:hover {
+  background: rgba(220, 53, 69, 0.3) !important;
+  color: #f56565 !important;
+}
+
+/* ========================================
+   MODAL COMPONENTS
+   ======================================== */
+
+/* Base modal overlay for all popups */
+.safis-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 2147483648;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Modal content container */
+.safis-modal-content {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98));
+  border: 1px solid #444;
+  border-radius: 16px;
+  padding: 24px;
+  width: 400px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease;
+}
+
+/* ========================================
+   BOOKMARK CARD STYLES
+   ======================================== */
+
+/* Grid view bookmark cards */
+.bookmark-card {
+  background: linear-gradient(135deg, #222 0%, #111 100%);
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.bookmark-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: #667eea;
+}
+
+/* List view bookmark items */
+.bookmark-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #222 0%, #111 100%);
+  border: 1px solid #333;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 64px;
+  position: relative;
+}
+
+.bookmark-item:hover {
+  transform: translateX(4px);
+  border-color: #667eea;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   FOLDER STYLES
+   ======================================== */
+
+/* Folder grid cards */
+.folder-card {
+  background: linear-gradient(135deg, #2a2a2a, #333);
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.folder-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: #667eea;
+}
+
+/* Folder actions (edit, delete buttons) */
+.folder-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.folder-card:hover .folder-actions {
+  opacity: 1;
+}
+
+/* ========================================
+   DROPDOWN STYLES
+   ======================================== */
+
+/* Folder selection dropdown */
+.folder-dropdown {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  background: linear-gradient(135deg, #222 0%, #111 100%);
+  border: 1px solid #444;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 2147483648;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
+
+.folder-option {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.folder-option:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.folder-option:last-child {
+  border-bottom: none;
+}
+
+/* ========================================
+   SEARCH & SUGGESTIONS
+   ======================================== */
+
+/* Search suggestions dropdown */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #2A2826;
+  border: 1px solid #3E3A35;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+}
+
+.suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #C2C0B6;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suggestion-item:hover {
+  background: #3E3A35;
+}
+
+/* ========================================
+   NOTIFICATION STYLES
+   ======================================== */
+
+/* Toast notifications */
+.safis-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 2147483648;
+  animation: slideInRight 0.3s ease;
+  max-width: 350px;
+  word-wrap: break-word;
+}
+
+/* Notification types */
+.safis-notification.success {
+  background: #2d5a27;
+  color: white;
+}
+
+.safis-notification.error {
+  background: #5a2d2d;
+  color: white;
+}
+
+.safis-notification.info {
+  background: #2d4a5a;
+  color: white;
+}
+
+.safis-notification.warning {
+  background: #5a4a2d;
+  color: white;
+}
+
+/* ========================================
+   LOADING STATES
+   ======================================== */
+
+/* Loading spinner */
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #3E3A35;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  #safis-modal {
+    width: 95vw !important;
+    height: 85vh !important;
+    margin: 0 !important;
+  }
+  
+  .bookmark-card {
+    min-height: 120px;
+    padding: 14px;
+  }
+  
+  .folder-card {
+    min-height: 100px;
+    padding: 16px;
+  }
+  
+  .safis-modal-content {
+    width: 90vw;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  #safis-modal {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+  }
+  
+  .bookmark-item {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  
+  .safis-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Hidden elements */
+.safis-hidden {
+  display: none !important;
+}
+
+/* Fade transition */
+.safis-fade {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.safis-fade.show {
+  opacity: 1;
+}
+
+/* Text truncation */
+.safis-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Focus visible for accessibility */
+.safis-focus:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ========================================
+   DARK THEME OVERRIDES
+   ======================================== */
+
+/* Ensure dark theme consistency */
+.safis-dark {
+  background: #1a1a1a !important;
+  color: #e5e5e5 !important;
+}
+
+.safis-dark input,
+.safis-dark textarea,
+.safis-dark select {
+  background: #2a2a2a !important;
+  color: #e5e5e5 !important;
+  border: 1px solid #444 !important;
+}
+
+.safis-dark input:focus,
+.safis-dark textarea:focus,
+.safis-dark select:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
