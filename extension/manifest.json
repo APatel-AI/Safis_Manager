@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Safis - Smart Bookmark Manager",
+  "name": "Safis - Bookmark Manager",
   "version": "1.0.0",
-  "description": "A smart bookmark manager with floating modal overlay for busy professionals",
+  "description": "A bookmark manager for busy professionals",
   
   "permissions": [
     "bookmarks",
