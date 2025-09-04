@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import glassesLogo from "./assets/glasses_emoji.png";
 import demoVideo from "./assets/demo.mov";
 import { EMAIL_CONFIG } from "./config";
@@ -8,6 +8,23 @@ function App() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showBetaBadge, setShowBetaBadge] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = document.querySelector('.hero');
+      if (heroSection) {
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const scrollPosition = window.scrollY + window.innerHeight * 0.3; // Show badge when 30% of viewport is past hero
+        setShowBetaBadge(scrollPosition < heroBottom);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const faqs = [
     {
@@ -76,11 +93,20 @@ function App() {
       <header className="header">
         <div className="container">
           <div className="header-content">
-            <a href="#" className="logo">
-              Safis
-            </a>
+            <div className="header-left">
+              <a href="#" className="logo">
+                Safis
+              </a>
+              <div className={`beta-badge ${!showBetaBadge ? 'hidden' : ''}`}>
+                <div className="beta-content">
+                  <div className="beta-title">Beta Version</div>
+                  <div className="beta-text">More features coming soon!</div>
+                  <div className="beta-text">Please feel free to share any feedback or feature requests</div>
+                </div>
+              </div>
+            </div>
             <nav className="nav">
-              <a href="#install">Install</a>
+              <a href="https://chromewebstore.google.com/detail/safis-smart-bookmark-mana/lijjlidijckaemmnghibihmakgchiblm?authuser=0&hl=en" target="_blank" rel="noopener noreferrer">Install</a>
               <a href="#footer" onClick={scrollToFooter}>Contact</a>
             </nav>
           </div>
@@ -99,7 +125,7 @@ function App() {
               For busy proffesionals with a lot of useful digital resources to keep handy.
             </p>
             <div className="cta-buttons">
-              <a href="#install" className="btn-primary">
+              <a href="https://chromewebstore.google.com/detail/safis-smart-bookmark-mana/lijjlidijckaemmnghibihmakgchiblm?authuser=0&hl=en" className="btn-primary" target="_blank" rel="noopener noreferrer">
                 Download for Chrome
               </a>
             </div>
@@ -162,7 +188,7 @@ function App() {
               accounts. No cloud. No noise — just simple bookmark tracking that
               lets you focus on your work.
             </p>
-            <a href="#install" className="btn-primary">
+            <a href="https://chromewebstore.google.com/detail/safis-smart-bookmark-mana/lijjlidijckaemmnghibihmakgchiblm?authuser=0&hl=en" className="btn-primary" target="_blank" rel="noopener noreferrer">
               Download for Chrome
             </a>
           </div>
@@ -183,7 +209,7 @@ function App() {
             <div className="footer-links">
               <div className="footer-column">
                 <h4>Product</h4>
-                <a href="#install">Download</a>
+                <a href="https://chromewebstore.google.com/detail/safis-smart-bookmark-mana/lijjlidijckaemmnghibihmakgchiblm?authuser=0&hl=en" target="_blank" rel="noopener noreferrer">Download</a>
                 <a href="#demo">Demo</a>
                 <a href="#faq">FAQ</a>
               </div>
