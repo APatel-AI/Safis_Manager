@@ -448,14 +448,14 @@ body {
   bottom: 24px;
   right: 24px;
   padding: 12px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #eb5939 0%, #c73e1d 100%);
   border: none;
   border-radius: 25px;
   color: white;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 20px rgba(235, 89, 57, 0.3);
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -465,8 +465,8 @@ body {
 
 .feedback-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 6px 25px rgba(235, 89, 57, 0.4);
+  background: linear-gradient(135deg, #c73e1d 0%, #eb5939 100%);
 }
 
 .feedback-button:active {
@@ -566,8 +566,8 @@ body {
 
 .feedback-textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #eb5939;
+  box-shadow: 0 0 0 3px rgba(235, 89, 57, 0.1);
 }
 
 .feedback-textarea::placeholder {
@@ -603,12 +603,12 @@ body {
 }
 
 .feedback-submit {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #eb5939 0%, #c73e1d 100%);
   color: white;
 }
 
 .feedback-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: linear-gradient(135deg, #c73e1d 0%, #eb5939 100%);
   transform: translateY(-1px);
 }
 
