@@ -37,12 +37,14 @@ function createSafisOverlay() {
     // Modal styles are now handled by CSS classes
 
     // Create modal content
+    console.log('Creating modal HTML...');
     modal.innerHTML = createModalHTML();
+    console.log('Modal HTML created successfully');
 
-    // Add external CSS file
+    // Add external CSS file with cache busting
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = chrome.runtime.getURL('src/styles.css');
+    link.href = chrome.runtime.getURL('src/styles.css') + '?v=' + Date.now();
     document.head.appendChild(link);
 
     // Assemble and display
@@ -89,7 +91,7 @@ function createSafisOverlay() {
   function getAppIcon() {
     // Check if we're in a Chrome extension context
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
-      return `<img src="${chrome.runtime.getURL('assets/glasses_emoji.png')}" style="width: 40px; height: 40px;" alt="Safis">`;
+      return `<img src="${chrome.runtime.getURL('assets/glasses_emoji.png')}" class="modal-header-icon" alt="Safis">`;
     }
   }
 
@@ -97,9 +99,9 @@ function createSafisOverlay() {
   function createModalHTML() {
     return `
       
-      <div id="sidebar" style="width: 70px; background: #111; border-right: 1px solid #2a2a2a; display: flex; flex-direction: column; border-radius: 12px 0 0 12px; padding: 16px 0;">
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px;">
-          <div id="modal-header" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 6px; transition: all 0.2s; margin-bottom: 16px;" title="View All Bookmarks">
+      <div id="sidebar" class="modal-sidebar">
+        <div class="sidebar-content">
+          <div id="modal-header" class="modal-header-btn" title="View All Bookmarks">
             ${getAppIcon()}
           </div>
           
@@ -111,7 +113,7 @@ function createSafisOverlay() {
             <div class="css-icon icon-plus"></div>
           </div>
           
-          <div style="width: 24px; height: 1px; background: #333; margin: 8px 0; border-radius: 1px;"></div>
+          <div class="sidebar-divider"></div>
           
           <div id="category-all-icon" class="sidebar-icon active" title="View All Bookmarks">
             <div class="css-icon icon-bookmarks"></div>
@@ -122,7 +124,7 @@ function createSafisOverlay() {
           </div>
         </div>
         
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #2a2a2a;">
+        <div class="sidebar-view-controls">
           <div id="grid-view" class="view-icon active" title="Grid View">
             <div class="css-icon icon-grid icon-small"></div>
           </div>
@@ -132,39 +134,39 @@ function createSafisOverlay() {
         </div>
       </div>
       
-      <div id="main-content" style="flex: 1; display: flex; flex-direction: column; background: #1a1a1a; border-radius: 0 12px 12px 0;">
-        <div id="content-header" style="padding: 16px 20px 12px 20px; border-bottom: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: space-between;">
+      <div id="main-content" class="modal-main-content">
+        <div id="content-header" class="modal-content-header">
           <div>
-            <h2 id="content-title" style="margin: 0; font-size: 18px; font-weight: 600; color: #fff;">All Bookmarks</h2>
-            <p id="content-subtitle" style="margin: 2px 0 0 0; font-size: 12px; color: #888;">All your saved bookmarks</p>
+            <h2 id="content-title" class="modal-content-title">All Bookmarks</h2>
+            <p id="content-subtitle" class="modal-content-subtitle">All your saved bookmarks</p>
           </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
+          <div class="modal-sort-controls">
             <button id="sort-date" class="sort-btn active">Recent</button>
             <button id="sort-name" class="sort-btn">A-Z</button>
           </div>
         </div>
-        <div id="bookmarks-container" style="flex: 1; padding: 16px; overflow-y: auto; position: relative;">
-          <div id="bookmarks-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-bottom: 120px;">
-            <div id="bookmarks-loading" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 14px; padding: 60px 0; text-align: center;">
-              <div style="width: 32px; height: 32px; border: 3px solid #333; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
+        <div id="bookmarks-container" class="modal-bookmarks-container">
+          <div id="bookmarks-grid" class="modal-bookmarks-grid show">
+            <div id="bookmarks-loading" class="modal-bookmarks-loading">
+              <div class="modal-loading-spinner"></div>
               <div>Loading your bookmarks...</div>
             </div>
           </div>
-          <div id="bookmarks-list" style="display: none; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100% - 20px); padding-bottom: 120px;"></div>
+          <div id="bookmarks-list" class="modal-bookmarks-list"></div>
         </div>
       </div>
       
-      <div id="search-popup" style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); width: min(420px, calc(100vw - 40px)); max-width: 90%; background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98)); border: 1px solid #444; border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1); z-index: 1000; display: none; overflow: hidden; backdrop-filter: blur(24px);">
-        <div style="padding: 16px;">
-          <div style="position: relative;">
-            <input id="search-input" type="text" placeholder="Search your bookmarks..." style="width: 100%; padding: 12px 16px 12px 40px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(102, 126, 234, 0.4); border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: all 0.3s ease; font-weight: 400; box-sizing: border-box;">
-            <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; color: #667eea;">
-              <div class="css-icon icon-search" style="width: 14px; height: 14px;"></div>
+      <div id="search-popup" class="modal-search-popup">
+        <div class="modal-search-input-container">
+          <div class="modal-search-input-wrapper">
+            <input id="search-input" type="text" placeholder="Search your bookmarks..." class="modal-search-input">
+            <div class="modal-search-icon">
+              <div class="css-icon icon-search modal-search-icon-inner"></div>
             </div>
           </div>
         </div>
-        <div id="search-results" style="max-height: 350px; overflow-y: auto; overflow-x: hidden; border-top: 1px solid rgba(255,255,255,0.08);">
-          <div style="padding: 20px; color: #888; font-size: 14px; text-align: center; font-weight: 400;">Start typing to search your bookmarks...</div>
+        <div id="search-results" class="modal-search-results">
+          <div class="modal-search-placeholder">Start typing to search your bookmarks...</div>
         </div>
       </div>
     `;
@@ -250,22 +252,53 @@ function createSafisOverlay() {
     const searchPopup = modal.querySelector('#search-popup');
     const searchInput = modal.querySelector('#search-input');
 
+    if (!searchIcon || !searchPopup || !searchInput) {
+      // Continue with rest of initialization
+    } else {
+
     searchIcon.addEventListener('click', () => {
-      const isVisible = searchPopup.style.display === 'block';
-      searchPopup.style.display = isVisible ? 'none' : 'block';
-      if (!isVisible) {
+      const isVisible = searchPopup.classList.contains('show');
+      if (isVisible) {
+        searchPopup.classList.remove('show');
+      } else {
+        searchPopup.classList.add('show');
         searchInput.focus();
       }
     });
 
+    searchInput.addEventListener('focus', () => {
+      searchPopup.classList.add('show');
+    });
+
+    let searchTimeout;
     searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase().trim();
-      if (query) {
-        const results = searchBookmarks(query);
-        displaySearchResults(results);
-      } else {
-        modal.querySelector('#search-results').innerHTML = '<div style="padding: 24px; color: #888; font-size: 14px; text-align: center; font-weight: 400;">Start typing to search your bookmarks...</div>';
+      if (searchPopup) {
+        searchPopup.classList.add('show');
       }
+      
+      const query = e.target.value.toLowerCase().trim();
+      
+      // Debounce search to improve performance
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        if (query) {
+          const results = searchBookmarks(query);
+          displaySearchResults(results);
+          // Also filter the main bookmark view
+          filterBookmarks(query);
+          sortBookmarks();
+          displayBookmarks();
+        } else {
+          const searchResultsContainer = modal.querySelector('#search-results');
+          if (searchResultsContainer) {
+            searchResultsContainer.innerHTML = '<div class="modal-search-placeholder">Start typing to search your bookmarks...</div>';
+          }
+          // Reset the main view
+          filterBookmarks('');
+          sortBookmarks();
+          displayBookmarks();
+        }
+      }, 150); // 150ms debounce
     });
 
     // Add keyboard navigation for search
@@ -285,21 +318,30 @@ function createSafisOverlay() {
         e.preventDefault();
         if (selectedSearchIndex >= 0 && results[selectedSearchIndex]) {
           results[selectedSearchIndex].click();
-          searchPopup.style.display = 'none';
+          searchPopup.classList.remove('show');
           searchInput.value = '';
         }
       } else if (e.key === 'Escape') {
-        searchPopup.style.display = 'none';
+        searchPopup.classList.remove('show');
         selectedSearchIndex = -1;
       } else {
         selectedSearchIndex = -1; // Reset selection when typing
       }
     });
 
+    
+    // Close search popup when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchPopup.contains(e.target) && !searchIcon.contains(e.target)) {
+        searchPopup.classList.remove('show');
+        selectedSearchIndex = -1;
+      }
+    });
+
     function updateSearchSelection(results) {
       results.forEach((item, index) => {
         if (index === selectedSearchIndex) {
-          item.style.background = 'rgba(102, 126, 234, 0.2)';
+          item.style.background = 'rgba(235, 89, 57, 0.2)';
           item.style.transform = 'translateX(4px)';
           item.scrollIntoView({ block: 'nearest' });
         } else {
@@ -327,6 +369,7 @@ function createSafisOverlay() {
         }
       }
     });
+    }
 
     // Add current tab functionality
     const addIcon = modal.querySelector('#add-icon');
@@ -368,7 +411,7 @@ function createSafisOverlay() {
     const searchPopup = modal.querySelector('#search-popup');
     const searchInput = modal.querySelector('#search-input');
     if (searchPopup) {
-      searchPopup.style.display = 'none';
+      searchPopup.classList.remove('show');
     }
     if (searchInput) {
       searchInput.value = '';
@@ -383,31 +426,26 @@ function createSafisOverlay() {
   }
 
   function displayFolders() {
-    console.log('=== DISPLAYING FOLDERS ===');
-    console.log('customFolders array:', customFolders);
-    console.log('customFolders.length:', customFolders.length);
-    
     const gridContainer = modal.querySelector('#bookmarks-grid');
     const listContainer = modal.querySelector('#bookmarks-list');
     
     if (!gridContainer) {
-      console.error('Grid container not found!');
       return;
     }
     
     // Always show grid for folders
-    gridContainer.style.display = 'grid';
-    if (listContainer) listContainer.style.display = 'none';
+    if (listContainer) listContainer.classList.remove('show');
+    gridContainer.classList.add('show');
     
     if (customFolders.length === 0) {
       gridContainer.innerHTML = `
-        <div style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 14px; padding: 80px 20px; text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 16px;">📁</div>
-          <h3 style="margin: 0 0 8px 0; color: #ccc; font-weight: 500;">No Folders</h3>
-          <p style="margin: 0; opacity: 0.8; line-height: 1.4;">Create folders to organize your bookmarks</p>
-          <div style="display: flex; gap: 12px; margin-top: 20px;">
-            <button id="create-folder-btn" style="padding: 10px 20px; background: #667eea; border: none; border-radius: 8px; color: white; font-weight: 500; cursor: pointer; transition: all 0.2s;">Create Folder</button>
-            <button id="import-chrome-folders-btn" style="padding: 10px 20px; background: rgba(102, 126, 234, 0.2); border: 2px solid #667eea; border-radius: 8px; color: #667eea; font-weight: 500; cursor: pointer; transition: all 0.2s;">Import from Chrome</button>
+        <div class="no-folders-container">
+          <div class="no-folders-icon">📁</div>
+          <h3 class="no-folders-title">No Folders</h3>
+          <p class="no-folders-text">Create folders to organize your bookmarks</p>
+          <div class="no-folders-buttons">
+            <button id="create-folder-btn" class="btn-primary">Create Folder</button>
+            <button id="import-chrome-folders-btn" class="btn-secondary">Import from Chrome</button>
           </div>
         </div>
       `;
@@ -418,28 +456,28 @@ function createSafisOverlay() {
     } else {
       // Display existing folders
       const foldersHTML = customFolders.map(folder => `
-        <div class="folder-card" data-folder-id="${folder.id}" style="background: linear-gradient(135deg, #2a2a2a, #333); border: 1px solid #444; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-            <div style="font-size: 24px;">📁</div>
-            <div class="folder-menu" style="position: relative; opacity: 0; transition: opacity 0.2s;">
-              <button class="folder-menu-trigger" data-folder-id="${folder.id}" style="padding:2px; width: 24px; height: 24px; border: none; background: rgba(255, 255, 255, 0.1); color: #999; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Options">
+        <div class="folder-card" data-folder-id="${folder.id}">
+          <div class="folder-header">
+            <div class="folder-icon">📁</div>
+            <div class="folder-menu">
+              <button class="folder-menu-trigger" data-folder-id="${folder.id}" title="Options">
                 <div class="css-icon icon-dots icon-small"></div>
               </button>
-              <div class="folder-dropdown" style="position: absolute; top: 100%; right: 0; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 120px; display: none;">
-                <button class="folder-menu-item edit-folder" data-folder-id="${folder.id}" style="width: 100%; padding: 8px 12px; border: none; background: transparent; color: #ccc; text-align: left; cursor: pointer; font-size: 12px; border-bottom: 1px solid #333; transition: all 0.2s;">Rename</button>
-                <button class="folder-menu-item delete-folder" data-folder-id="${folder.id}" style="width: 100%; padding: 8px 12px; border: none; background: transparent; color: #ff9999; text-align: left; cursor: pointer; font-size: 12px; transition: all 0.2s;">Delete</button>
+              <div class="folder-dropdown">
+                <button class="folder-menu-item edit-folder" data-folder-id="${folder.id}">Rename</button>
+                <button class="folder-menu-item delete-folder" data-folder-id="${folder.id}">Delete</button>
               </div>
             </div>
           </div>
-          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #fff;">${escapeHtml(folder.name)}</h3>
-          <p style="margin: 0; font-size: 12px; color: #888;">${folder.bookmarks.length} bookmark${folder.bookmarks.length !== 1 ? 's' : ''}</p>
+          <h3 class="folder-name">${escapeHtml(folder.name)}</h3>
+          <p class="folder-count">${folder.bookmarks.length} bookmark${folder.bookmarks.length !== 1 ? 's' : ''}</p>
         </div>
       `).join('');
       
       gridContainer.innerHTML = foldersHTML + `
-        <div class="new-folder-card" style="background: rgba(102, 126, 234, 0.1); border: 2px dashed #667eea; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 8px; color: #667eea;">+</div>
-          <p style="margin: 0; font-size: 13px; color: #667eea; font-weight: 500;">Create New Folder</p>
+        <div class="new-folder-card">
+          <div class="new-folder-icon">+</div>
+          <p class="new-folder-text">Create New Folder</p>
         </div>
       `;
       
@@ -454,14 +492,10 @@ function createSafisOverlay() {
         });
         
         card.addEventListener('mouseenter', () => {
-          card.style.transform = 'translateY(-2px) scale(1.02)';
-          card.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';
           card.querySelector('.folder-menu').style.opacity = '1';
         });
         
         card.addEventListener('mouseleave', () => {
-          card.style.transform = 'translateY(0) scale(1)';
-          card.style.boxShadow = 'none';
           card.querySelector('.folder-menu').style.opacity = '0';
         });
       });
@@ -475,12 +509,12 @@ function createSafisOverlay() {
           // Close all other dropdowns first
           modal.querySelectorAll('.folder-dropdown').forEach(menu => {
             if (menu !== dropdown) {
-              menu.style.display = 'none';
+              menu.classList.remove('folder-dropdown-show');
             }
           });
           
           // Toggle this dropdown
-          dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+          dropdown.classList.toggle('folder-dropdown-show');
         });
       });
 
@@ -520,7 +554,7 @@ function createSafisOverlay() {
       document.addEventListener('click', (e) => {
         if (!e.target.closest('.folder-menu')) {
           modal.querySelectorAll('.folder-dropdown').forEach(menu => {
-            menu.style.display = 'none';
+            menu.classList.remove('folder-dropdown-show');
           });
         }
       });
@@ -556,48 +590,17 @@ function createSafisOverlay() {
     modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-        <h2 style="margin: 0; color: #fff; font-size: 18px; font-weight: 600;">${isEdit ? 'Edit Folder' : 'Create New Folder'}</h2>
-        <button id="close-folder-modal" style="width: 28px; height: 28px; border: none; background: rgba(255,255,255,0.1); color: #999; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">×</button>
+      <div class="modal-header">
+        <h2 class="modal-title">${isEdit ? 'Edit Folder' : 'Create New Folder'}</h2>
+        <button id="close-folder-modal" class="modal-close-btn">×</button>
       </div>
-      <div style="margin-bottom: 20px;">
-        <label style="display: block; color: #ccc; font-size: 14px; margin-bottom: 8px; font-weight: 500;">Folder Name</label>
-        <input id="folder-name-input" type="text" placeholder="Enter folder name..." value="${isEdit ? folder?.name || '' : ''}" style="
-          width: 100%;
-          padding: 12px 16px;
-          background: rgba(255,255,255,0.05);
-          border: 2px solid rgba(102, 126, 234, 0.3);
-          border-radius: 8px;
-          color: #fff;
-          font-size: 14px;
-          outline: none;
-          transition: all 0.2s;
-          box-sizing: border-box;
-        ">
+      <div class="modal-field">
+        <label class="modal-label">Folder Name</label>
+        <input id="folder-name-input" type="text" placeholder="Enter folder name..." value="${isEdit ? folder?.name || '' : ''}" class="modal-input">
       </div>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button id="cancel-folder-modal" style="
-          padding: 10px 20px;
-          border: 2px solid rgba(255,255,255,0.1);
-          background: transparent;
-          color: #ccc;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          transition: all 0.2s;
-        ">Cancel</button>
-        <button id="save-folder-btn" style="
-          padding: 10px 20px;
-          border: 1px;
-          background: #000000;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          color: white;
-          transition: all 0.2s;
-        ">${isEdit ? 'Save Changes' : 'Create Folder'}</button>
+      <div class="modal-buttons">
+        <button id="cancel-folder-modal" class="btn-cancel">Cancel</button>
+        <button id="save-folder-btn" class="btn-primary">${isEdit ? 'Save Changes' : 'Create Folder'}</button>
       </div>
     `;
 
@@ -616,12 +619,12 @@ function createSafisOverlay() {
 
     // Input focus styles
     input.addEventListener('focus', () => {
-      input.style.borderColor = '#667eea';
-      input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+      input.style.borderColor = '#eb5939';
+      input.style.boxShadow = '0 0 0 3px rgba(235, 89, 57, 0.1)';
     });
 
     input.addEventListener('blur', () => {
-      input.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+      input.style.borderColor = 'rgba(235, 89, 57, 0.3)';
       input.style.boxShadow = 'none';
     });
 
@@ -761,34 +764,14 @@ function createSafisOverlay() {
     modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
-      <div style="margin-bottom: 20px; text-align: center;">
-        <div style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(220, 53, 69, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #dc3545; font-size: 20px;">⚠️</div>
-        <h2 style="margin: 0 0 8px 0; color: #fff; font-size: 18px; font-weight: 600;">Delete Folder</h2>
-        <p style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.4;">Are you sure you want to delete "<strong>${escapeHtml(folderName)}</strong>"?<br>This action cannot be undone.</p>
+      <div class="modal-content-center">
+        <div class="modal-warning-icon">⚠️</div>
+        <h2 class="modal-title">Delete Folder</h2>
+        <p class="modal-text">Are you sure you want to delete "<strong>${escapeHtml(folderName)}</strong>"?<br>This action cannot be undone.</p>
       </div>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button id="cancel-delete-folder" style="
-          padding: 10px 20px;
-          border: 2px solid rgba(255,255,255,0.1);
-          background: transparent;
-          color: #ccc;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          transition: all 0.2s;
-        ">Cancel</button>
-        <button id="confirm-delete-folder" style="
-          padding: 10px 20px;
-          border: none;
-          background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-          color: white;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          transition: all 0.2s;
-        ">Delete Folder</button>
+      <div class="modal-buttons">
+        <button id="cancel-delete-folder" class="btn-cancel">Cancel</button>
+        <button id="confirm-delete-folder" class="btn-danger">Delete Folder</button>
       </div>
     `;
 
@@ -870,52 +853,21 @@ function createSafisOverlay() {
     modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-        <h2 style="margin: 0; color: #fff; font-size: 18px; font-weight: 600;">Create New Folder</h2>
-        <button id="close-folder-modal" style="width: 28px; height: 28px; border: none; background: rgba(255,255,255,0.1); color: #999; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">×</button>
+      <div class="modal-header">
+        <h2 class="modal-title">Create New Folder</h2>
+        <button id="close-folder-modal" class="modal-close-btn">×</button>
       </div>
-      <div style="margin-bottom: 16px; padding: 12px 16px; background: rgba(102, 126, 234, 0.1); border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 8px;">
-        <div style="font-size: 12px; color: #7a8cff; margin-bottom: 4px;">Adding bookmark:</div>
-        <div style="font-size: 14px; color: #fff; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(bookmark.title)}</div>
+      <div class="modal-bookmark-preview">
+        <div class="modal-bookmark-preview-label">Adding bookmark:</div>
+        <div class="modal-bookmark-preview-title">${escapeHtml(bookmark.title)}</div>
       </div>
-      <div style="margin-bottom: 20px;">
-        <label style="display: block; color: #ccc; font-size: 14px; margin-bottom: 8px; font-weight: 500;">Folder Name</label>
-        <input id="folder-name-input" type="text" placeholder="Enter folder name..." style="
-          width: 100%;
-          padding: 12px 16px;
-          background: rgba(255,255,255,0.05);
-          border: 2px solid rgba(102, 126, 234, 0.3);
-          border-radius: 8px;
-          color: #fff;
-          font-size: 14px;
-          outline: none;
-          transition: all 0.2s;
-          box-sizing: border-box;
-        ">
+      <div class="modal-field">
+        <label class="modal-label">Folder Name</label>
+        <input id="folder-name-input" type="text" placeholder="Enter folder name..." class="modal-input">
       </div>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button id="cancel-folder-modal" style="
-          padding: 10px 20px;
-          border: 2px solid rgba(255,255,255,0.1);
-          background: transparent;
-          color: #ccc;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          transition: all 0.2s;
-        ">Cancel</button>
-        <button id="save-folder-btn" style="
-          padding: 10px 20px;
-          border: 1px;
-          background: #000000;
-          color: white;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          transition: all 0.2s;
-        ">Create & Add</button>
+      <div class="modal-buttons">
+        <button id="cancel-folder-modal" class="btn-cancel">Cancel</button>
+        <button id="save-folder-btn" class="btn-primary">Create & Add</button>
       </div>
     `;
 
@@ -933,12 +885,12 @@ function createSafisOverlay() {
 
     // Input focus styles
     input.addEventListener('focus', () => {
-      input.style.borderColor = '#667eea';
-      input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+      input.style.borderColor = '#eb5939';
+      input.style.boxShadow = '0 0 0 3px rgba(235, 89, 57, 0.1)';
     });
 
     input.addEventListener('blur', () => {
-      input.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+      input.style.borderColor = 'rgba(235, 89, 57, 0.3)';
       input.style.boxShadow = 'none';
     });
 
@@ -1075,12 +1027,12 @@ function createSafisOverlay() {
     modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
-      <div style="margin-bottom: 20px; text-align: center;">
-        <div style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(102, 126, 234, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #667eea; font-size: 20px;">📁</div>
-        <h2 style="margin: 0 0 8px 0; color: #fff; font-size: 18px; font-weight: 600;">Create Your First Folder</h2>
-        <p style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.4;">You need to create a folder first before adding bookmarks.<br>Would you like to create one now?</p>
+      <div class="folder-create-content">
+        <div class="folder-create-icon">📁</div>
+        <h2 class="folder-create-title">Create Your First Folder</h2>
+        <p class="folder-create-text">You need to create a folder first before adding bookmarks.<br>Would you like to create one now?</p>
       </div>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+      <div class="folder-dialog-actions">
         <button id="cancel-create-first" style="
           padding: 10px 20px;
           border: 2px solid rgba(255,255,255,0.1);
@@ -1095,7 +1047,7 @@ function createSafisOverlay() {
         <button id="confirm-create-first" style="
           padding: 10px 20px;
           border: none;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #eb5939 0%, #c13923 100%);
           color: white;
           border-radius: 8px;
           cursor: pointer;
@@ -1176,14 +1128,14 @@ function createSafisOverlay() {
         align-items: center;
         justify-content: space-between;
       ">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="font-size: 16px;">📁</div>
-          <div>
-            <div style="color: #fff; font-size: 14px; font-weight: 500;">${escapeHtml(folder.name)}</div>
-            <div style="color: #888; font-size: 11px;">${folder.bookmarks.length} bookmark${folder.bookmarks.length !== 1 ? 's' : ''}</div>
+        <div class="folder-item-content">
+          <div class="folder-item-icon">📁</div>
+          <div class="folder-item-details">
+            <div class="folder-item-name">${escapeHtml(folder.name)}</div>
+            <div class="folder-item-count">${folder.bookmarks.length} bookmark${folder.bookmarks.length !== 1 ? 's' : ''}</div>
           </div>
         </div>
-        <div style="color: #667eea; font-size: 20px; opacity: 0; transition: opacity 0.2s;">+</div>
+        <div class="folder-item-add-icon">+</div>
       </div>
     `).join('');
     
@@ -1199,10 +1151,10 @@ function createSafisOverlay() {
         <button id="create-new-folder-btn" style="
           flex: 1;
           padding: 8px 12px;
-          background: rgba(102, 126, 234, 0.2);
-          border: 1px solid #667eea;
+          background: rgba(235, 89, 57, 0.2);
+          border: 1px solid #eb5939;
           border-radius: 8px;
-          color: #667eea;
+          color: #eb5939;
           font-size: 12px;
           font-weight: 500;
           cursor: pointer;
@@ -1227,7 +1179,7 @@ function createSafisOverlay() {
     // Add event listeners
     dropdown.querySelectorAll('.folder-option').forEach(option => {
       option.addEventListener('mouseenter', () => {
-        option.style.background = 'rgba(102, 126, 234, 0.1)';
+        option.style.background = 'rgba(235, 89, 57, 0.1)';
         option.querySelector('div:last-child').style.opacity = '1';
       });
       
@@ -1313,9 +1265,20 @@ function createSafisOverlay() {
     modal.querySelector(`#sort-${currentSort}`).classList.add('active');
   }
 
-  // Simplified - no category filtering needed
-  function filterBookmarks() {
-    filteredBookmarks = [...allBookmarks];
+  // Filter bookmarks based on search query
+  function filterBookmarks(searchQuery = '') {
+    if (!searchQuery || searchQuery.trim() === '') {
+      // Reset to appropriate bookmarks based on current mode
+      if (currentMode === 'folder') {
+        const folder = customFolders.find(f => f.id === currentCategory);
+        filteredBookmarks = folder ? [...folder.bookmarks] : [];
+      } else {
+        filteredBookmarks = [...allBookmarks];
+      }
+    } else {
+      const results = searchBookmarks(searchQuery);
+      filteredBookmarks = results;
+    }
   }
 
   function sortBookmarks() {
@@ -1336,7 +1299,6 @@ function createSafisOverlay() {
 
   function displayGridView() {
     if (!modal) {
-      console.warn('displayGridView: modal not available');
       return;
     }
     
@@ -1347,8 +1309,13 @@ function createSafisOverlay() {
     }
     const listContainer = modal.querySelector('#bookmarks-list');
     
-    container.style.display = 'grid';
-    if (listContainer) listContainer.style.display = 'none';
+    if (!listContainer) {
+      console.warn('displayGridView: list container not found');
+    }
+    
+    // Ensure proper visibility toggle
+    if (listContainer) listContainer.classList.remove('show');
+    container.classList.add('show');
     container.innerHTML = '';
     
     if (filteredBookmarks.length === 0) {
@@ -1356,49 +1323,46 @@ function createSafisOverlay() {
       return;
     }
 
+    // Use document fragment for better performance
+    const fragment = document.createDocumentFragment();
+    
     filteredBookmarks.forEach(bookmark => {
       const card = document.createElement('div');
       card.className = 'bookmark-card';
-      card.className = 'bookmark-card';
       
       const faviconHtml = bookmark.favicon ? 
-        '<img src="' + bookmark.favicon + '" style="width: 32px; height: 32px; border-radius: 6px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';"><div style="display: none; font-size: 28px; opacity: 0.7;">🌐</div>' :
-        '<div style="font-size: 28px; opacity: 0.7;">🌐</div>';
+        '<img src="' + bookmark.favicon + '" class="bookmark-favicon" onerror="this.classList.add(\'favicon-error\'); this.nextElementSibling.classList.remove(\'hidden\');"><div class="bookmark-favicon-fallback hidden">🌐</div>' :
+        '<div class="bookmark-favicon-default">🌐</div>';
 
       card.innerHTML = 
-        '<div style="display: flex; flex-direction: column; gap: 10px; flex: 1;">' +
-          '<div style="display: flex; align-items: center; justify-content: space-between;">' +
-            '<div>' + faviconHtml + '</div>' +
-            '<div class="bookmark-menu" style="position: relative; opacity: 1; transition: opacity 0.2s;">' +
-              '<button class="menu-trigger" data-id="' + bookmark.id + '" style="width: 24px; height: 24px; border: none; background: rgba(255, 255, 255, 0.1); color: #999; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Options"><div class="css-icon icon-dots icon-small"></div></button>' +
-              '<div class="menu-dropdown" style="position: absolute; top: 100%; right: 0; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 120px; display: none;">' +
-                '<button class="menu-item edit-bookmark" data-id="' + bookmark.id + '" style="width: 100%; padding: 8px 12px; border: none; background: transparent; color: #ccc; text-align: left; cursor: pointer; font-size: 12px; border-bottom: 1px solid #333; transition: all 0.2s;">Edit</button>' +
-                '<button class="menu-item add-to-folder" data-id="' + bookmark.id + '" style="width: 100%; padding: 8px 12px; border: none; background: transparent; color: #ccc; text-align: left; cursor: pointer; font-size: 12px; border-bottom: 1px solid #333; transition: all 0.2s;">Add to Folder</button>' +
-                '<button class="menu-item delete-bookmark" data-id="' + bookmark.id + '" style="width: 100%; padding: 8px 12px; border: none; background: transparent; color: #ff9999; text-align: left; cursor: pointer; font-size: 12px; transition: all 0.2s;">Delete</button>' +
+        '<div class="bookmark-card-content">' +
+          '<div class="bookmark-card-header">' +
+            '<div class="bookmark-favicon-container">' + faviconHtml + '</div>' +
+            '<div class="bookmark-menu">' +
+              '<button class="menu-trigger" data-id="' + bookmark.id + '" title="Options"><div class="css-icon icon-dots icon-small"></div></button>' +
+              '<div class="menu-dropdown">' +
+                '<button class="menu-item edit-bookmark" data-id="' + bookmark.id + '">Edit</button>' +
+                '<button class="menu-item add-to-folder" data-id="' + bookmark.id + '">Add to Folder</button>' +
+                '<button class="menu-item delete-bookmark" data-id="' + bookmark.id + '">Delete</button>' +
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div>' +
-            '<h3 style="margin: 0; font-size: 15px; font-weight: 600; color: #fff; line-height: 1.3; max-height: 42px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">' + escapeHtml(bookmark.title) + '</h3>' +
-            '<p style="margin: 8px 0 0 0; font-size: 12px; color: #888; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + bookmark.domain + '</p>' +
+          '<div class="bookmark-card-info">' +
+            '<h3 class="bookmark-title">' + escapeHtml(bookmark.title) + '</h3>' +
+            '<p class="bookmark-domain">' + bookmark.domain + '</p>' +
           '</div>' +
         '</div>' +
-        '<div style="display: flex; justify-content: flex-start; align-items: center; margin-top: 10px;">' +
-          '<div style="background: rgba(102, 126, 234, 0.12); color: #7a8cff; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 500;">' + bookmark.category + '</div>' +
+        '<div class="bookmark-card-footer">' +
+          '<div class="bookmark-category">' + bookmark.category + '</div>' +
         '</div>';
       
-      // Enhanced hover effects
+      // Close any open dropdowns when hovering on other bookmarks
       card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-4px) scale(1.02)';
-        card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.4)';
-        card.style.borderColor = '#667eea';
-        
-        // Close any open dropdowns when hovering on other bookmarks
         modal.querySelectorAll('.menu-dropdown').forEach(menu => {
           const menuParent = menu.closest('.bookmark-item');
           // Only close if this is a different bookmark
           if (menuParent !== card) {
-            menu.style.display = 'none';
+            menu.classList.remove('menu-dropdown-show');
             menu.classList.remove('menu-active');
             // Reset z-index of parent bookmark item
             if (menuParent) {
@@ -1410,12 +1374,6 @@ function createSafisOverlay() {
         });
       });
       
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(0) scale(1)';
-        card.style.boxShadow = 'none';
-        card.style.borderColor = '#333';
-      });
-      
       // Click to open (except on buttons)
       card.addEventListener('click', (e) => {
         if (!e.target.closest('button')) {
@@ -1423,65 +1381,102 @@ function createSafisOverlay() {
         }
       });
       
-      container.appendChild(card);
+      fragment.appendChild(card);
     });
+
+    // Append all cards at once for better performance
+    container.appendChild(fragment);
 
     // Attach event listeners for bookmark actions
     attachBookmarkActionListeners();
   }
 
   function displayListView() {
+    if (!modal) {
+      return;
+    }
+    
     const container = modal.querySelector('#bookmarks-list');
     const gridContainer = modal.querySelector('#bookmarks-grid');
     
-    container.style.display = 'flex';
-    container.style.cssText = 'display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: calc(100% - 20px); padding-right: 4px;';
-    gridContainer.style.display = 'none';
+    if (!container || !gridContainer) {
+      return;
+    }
+    
+    // Ensure proper visibility toggle
+    gridContainer.classList.remove('show');
+    container.classList.add('show');
     container.innerHTML = '';
     
-    if (filteredBookmarks.length === 0) {
+    if (!filteredBookmarks || filteredBookmarks.length === 0) {
       container.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 14px; padding: 60px 16px; text-align: center;"><div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📖</div><div style="font-size: 16px; margin-bottom: 6px;">No bookmarks found</div><div style="font-size: 12px; opacity: 0.8;">Try adjusting your search or add some bookmarks</div></div>';
       return;
     }
 
+    // Use document fragment for better performance
+    const fragment = document.createDocumentFragment();
+    
     filteredBookmarks.forEach(bookmark => {
-      const item = document.createElement('div');
-      item.className = 'bookmark-list-item';
-      item.className = 'bookmark-item';
       
-      const faviconHtml = bookmark.favicon ? 
-        '<img src="' + bookmark.favicon + '" style="width: 24px; height: 24px; border-radius: 6px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';"><div style="display: none; color: #888; font-size: 20px; width: 24px; height: 24px; align-items: center; justify-content: center;">🌐</div>' :
-        '<div style="color: #888; font-size: 20px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">🌐</div>';
+      const item = document.createElement('div');
+      item.className = 'bookmark-list-item bookmark-item';
+      
+      // Ensure bookmark has all required properties
+      let safeDomain = bookmark.domain || 'Unknown';
+      let safeFavicon = bookmark.favicon;
+      
+      if (!bookmark.domain && bookmark.url) {
+        try {
+          safeDomain = new URL(bookmark.url).hostname;
+        } catch (e) {
+          safeDomain = 'Unknown';
+        }
+      }
+      
+      if (!bookmark.favicon && bookmark.url) {
+        try {
+          const hostname = new URL(bookmark.url).hostname;
+          safeFavicon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+        } catch (e) {
+          safeFavicon = null;
+        }
+      }
+      
+      const faviconHtml = safeFavicon ? 
+        '<img src="' + safeFavicon + '" class="bookmark-list-favicon-img" onerror="this.classList.add(\'favicon-error\'); this.nextElementSibling.classList.remove(\'hidden\');"><div class="bookmark-list-favicon-fallback hidden">🌐</div>' :
+        '<div class="bookmark-list-favicon-default">🌐</div>';
 
       item.innerHTML = 
-        '<div style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.08); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">' + faviconHtml + '</div>' +
-        '<div style="flex: 1; min-width: 0; margin-right: 12px;">' +
-          '<h3 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;">' + escapeHtml(bookmark.title) + '</h3>' +
-          '<div style="font-size: 12px; color: #888; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + bookmark.domain + '</div>' +
-        '</div>' +
-        '<div class="bookmark-menu" style="position: relative; opacity: 0; transition: opacity 0.2s ease;">' +
-          '<button class="menu-trigger" data-id="' + bookmark.id + '" style="width: 32px; height: 32px; border: none; background: rgba(255, 255, 255, 0.08); color: #888; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Options">' +
-            '<div class="css-icon icon-dots icon-small"></div>' +
-          '</button>' +
-          '<div class="menu-dropdown" style="position: absolute; top: 100%; right: 0; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); z-index: 1000; min-width: 140px; display: none; margin-top: 4px;">' +
-            '<button class="menu-item edit-bookmark" data-id="' + bookmark.id + '" style="width: 100%; padding: 12px 16px; border: none; background: transparent; color: #ccc; text-align: left; cursor: pointer; font-size: 13px; font-weight: 500; border-bottom: 1px solid #333; transition: all 0.2s ease;">Edit</button>' +
-            '<button class="menu-item add-to-folder" data-id="' + bookmark.id + '" style="width: 100%; padding: 12px 16px; border: none; background: transparent; color: #ccc; text-align: left; cursor: pointer; font-size: 13px; font-weight: 500; border-bottom: 1px solid #333; transition: all 0.2s ease;">Add to Folder</button>' +
-            '<button class="menu-item delete-bookmark" data-id="' + bookmark.id + '" style="width: 100%; padding: 12px 16px; border: none; background: transparent; color: #ff9999; text-align: left; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s ease;">Delete</button>' +
+        '<div class="bookmark-list-content">' +
+          '<div class="bookmark-list-favicon">' + faviconHtml + '</div>' +
+          '<div class="bookmark-list-info">' +
+            '<h3 class="bookmark-list-title">' + escapeHtml(bookmark.title || 'Untitled') + '</h3>' +
+            '<div class="bookmark-list-domain">' + safeDomain + '</div>' +
           '</div>' +
+        '</div>' +
+        '<div class="bookmark-menu bookmark-list-menu" data-id="' + bookmark.id + '">' +
+          '<button class="menu-trigger" title="Options">⋮</button>' +
+          '<div class="action-buttons">' +
+            '<button class="action-btn add-folder" title="Add to Folder" data-action="add-folder" data-id="' + bookmark.id + '">+</button>' +
+            '<button class="action-btn edit" title="Edit" data-action="edit" data-id="' + bookmark.id + '">✎</button>' +
+            '<button class="action-btn delete" title="Delete" data-action="delete" data-id="' + bookmark.id + '">−</button>' +
+          '</div>' +
+          '<button class="menu-collapse" title="Hide menu">×</button>' +
         '</div>';
+      
       
       // Hover effects for list items
       item.addEventListener('mouseenter', () => {
         item.style.borderColor = '#444';
         item.style.background = 'linear-gradient(135deg, #252525 0%, #1a1a1a 100%)';
-        const menu = item.querySelector('.bookmark-menu');
+        const menu = item.querySelector('.bookmark-menu, .bookmark-list-menu');
         if (menu) menu.style.opacity = '1';
       });
       
       item.addEventListener('mouseleave', () => {
         item.style.borderColor = '#333';
         item.style.background = 'linear-gradient(135deg, #222 0%, #111 100%)';
-        const menu = item.querySelector('.bookmark-menu');
+        const menu = item.querySelector('.bookmark-menu, .bookmark-list-menu');
         if (menu) menu.style.opacity = '0';
       });
       
@@ -1492,38 +1487,126 @@ function createSafisOverlay() {
         }
       });
       
-      container.appendChild(item);
+      fragment.appendChild(item);
     });
+    
+    // Append all items at once for better performance
+    container.appendChild(fragment);
+    
+    console.log('List view rendered successfully. Fragment children:', fragment.children?.length || 0);
+    console.log('Container after append:', container.children?.length || 0);
 
     // Attach event listeners for bookmark actions
     attachBookmarkActionListeners();
   }
 
   function attachBookmarkActionListeners() {
-    // Menu trigger listeners
+    // Remove existing listeners first to prevent duplicates
+    modal.querySelectorAll('.menu-trigger').forEach(btn => {
+      btn.replaceWith(btn.cloneNode(true));
+    });
+    
+    // Menu trigger listeners (3-dot button)
     modal.querySelectorAll('.menu-trigger').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        // Close all other open menus
-        modal.querySelectorAll('.menu-dropdown').forEach(menu => {
-          if (menu !== btn.nextElementSibling) {
-            menu.style.display = 'none';
+        try {
+          e.stopPropagation();
+          
+          const menuContainer = btn.closest('.bookmark-list-menu') || btn.closest('.bookmark-menu');
+          
+          if (!menuContainer) {
+            console.warn('Menu container not found for button:', btn, 'Parent elements:', btn.parentElement, btn.parentElement?.parentElement);
+            return;
           }
-        });
-        
-        // Toggle current menu
-        const dropdown = btn.nextElementSibling;
-        const isOpen = dropdown.style.display === 'block';
-        const parentItem = dropdown.closest('.bookmark-item');
-        
-        if (isOpen) {
-          dropdown.style.display = 'none';
-        } else {
-          dropdown.style.display = 'block';
+          
+          // Close all other expanded menus
+          modal.querySelectorAll('.bookmark-list-menu.expanded, .bookmark-menu.expanded').forEach(menu => {
+            if (menu !== menuContainer) {
+              menu.classList.remove('expanded');
+            }
+          });
+          
+          // Close all dropdown menus
+          modal.querySelectorAll('.menu-dropdown.menu-dropdown-show').forEach(dropdown => {
+            dropdown.classList.remove('menu-dropdown-show');
+          });
+          
+          // Handle both new expandable menu and old dropdown menu
+          const dropdown = menuContainer.querySelector('.menu-dropdown');
+          if (dropdown) {
+            // Old grid view dropdown system
+            dropdown.classList.toggle('menu-dropdown-show');
+          } else {
+            // New list view expandable system
+            menuContainer.classList.toggle('expanded');
+          }
+        } catch (error) {
+          console.error('Error in menu trigger click handler:', error, 'Button:', btn);
         }
       });
     });
+
+    // Action button listeners
+    modal.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        const action = btn.dataset.action;
+        const bookmarkId = btn.dataset.id;
+        const menuContainer = btn.closest('.bookmark-list-menu');
+        
+        // Close the expanded menu
+        menuContainer.classList.remove('expanded');
+        
+        // Handle the action
+        if (action === 'add-folder') {
+          handleAddToFolder(bookmarkId);
+        } else if (action === 'edit') {
+          handleEditBookmark(bookmarkId);
+        } else if (action === 'delete') {
+          handleDeleteBookmark(bookmarkId);
+        }
+      });
+    });
+
+    // Menu collapse button listeners
+    modal.querySelectorAll('.menu-collapse').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const menuContainer = btn.closest('.bookmark-list-menu');
+        menuContainer.classList.remove('expanded');
+      });
+    });
+
+    // Close expanded menus when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.bookmark-list-menu') && !e.target.closest('.bookmark-menu')) {
+        // Close expandable menus
+        modal.querySelectorAll('.bookmark-list-menu.expanded').forEach(menu => {
+          menu.classList.remove('expanded');
+        });
+        // Close dropdown menus
+        modal.querySelectorAll('.menu-dropdown.menu-dropdown-show').forEach(dropdown => {
+          dropdown.classList.remove('menu-dropdown-show');
+        });
+      }
+    });
+
+    // Handler functions
+    function handleAddToFolder(bookmarkId) {
+      // For now, show a simple notification - can be enhanced later
+      showNotification('Add to folder functionality coming soon!', 'info');
+    }
+
+    function handleEditBookmark(bookmarkId) {
+      // Call the edit function directly
+      editBookmark(bookmarkId);
+    }
+
+    function handleDeleteBookmark(bookmarkId) {
+      // Call the delete function directly
+      deleteBookmark(bookmarkId);
+    }
 
     // Edit bookmark listeners
     modal.querySelectorAll('.edit-bookmark').forEach(btn => {
@@ -1533,7 +1616,7 @@ function createSafisOverlay() {
         // Close menu
         const menuDropdown = btn.closest('.menu-dropdown');
         if (menuDropdown) {
-          menuDropdown.style.display = 'none';
+          menuDropdown.classList.remove('menu-dropdown-show');
         }
         editBookmark(bookmarkId);
       });
@@ -1547,7 +1630,7 @@ function createSafisOverlay() {
         // Close menu
         const menuDropdown = btn.closest('.menu-dropdown');
         if (menuDropdown) {
-          menuDropdown.style.display = 'none';
+          menuDropdown.classList.remove('menu-dropdown-show');
         }
         deleteBookmark(bookmarkId);
       });
@@ -1561,7 +1644,7 @@ function createSafisOverlay() {
         // Close menu
         const menuDropdown = btn.closest('.menu-dropdown');
         if (menuDropdown) {
-          menuDropdown.style.display = 'none';
+          menuDropdown.classList.remove('menu-dropdown-show');
         }
         showAddToFolderDialog(bookmarkId);
       });
@@ -1592,18 +1675,18 @@ function createSafisOverlay() {
       resultItem.className = 'search-result-item';
       resultItem.dataset.url = bookmark.url;
       resultItem.dataset.index = index;
-      resultItem.style.cssText = 'padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; min-height: 60px;';
+      resultItem.style.cssText = 'padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; min-height: 68px;';
       
       const faviconHtml = bookmark.favicon ? 
         `<img src="${bookmark.favicon}" style="width: 20px; height: 20px; border-radius: 4px; margin-right: 12px; flex-shrink: 0;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div style="display: none; font-size: 16px; opacity: 0.6; margin-right: 12px; flex-shrink: 0;">🌐</div>` :
         '<div style="font-size: 16px; opacity: 0.6; margin-right: 12px; flex-shrink: 0;">🌐</div>';
       
       resultItem.innerHTML = faviconHtml +
-        '<div style="flex: 1; min-width: 0;">' +
-          `<div style="font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(bookmark.title)}</div>` +
-          `<div style="font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bookmark.domain}</div>` +
+        '<div style="flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">' +
+          `<div style="font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(bookmark.title)}</div>` +
+          `<div style="font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8;">${bookmark.url}</div>` +
         '</div>' +
-        `<div style="background: rgba(102, 126, 234, 0.15); color: #7a8cff; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 500; margin-left: 8px; flex-shrink: 0;">${bookmark.category}</div>`;
+        `<div style="background: rgba(235, 89, 57, 0.15); color: #eb5939; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 500; margin-left: 12px; flex-shrink: 0;">${bookmark.category || 'All Bookmarks'}</div>`;
       
       // Add click event listener
       resultItem.addEventListener('click', (e) => {
@@ -1613,16 +1696,7 @@ function createSafisOverlay() {
         hideSearchPopup();
       });
       
-      // Add hover effects
-      resultItem.addEventListener('mouseenter', () => {
-        resultItem.style.background = 'rgba(102, 126, 234, 0.1)';
-        resultItem.style.transform = 'translateX(4px)';
-      });
-      
-      resultItem.addEventListener('mouseleave', () => {
-        resultItem.style.background = 'transparent';
-        resultItem.style.transform = 'translateX(0)';
-      });
+      // CSS handles hover effects
       
       container.appendChild(resultItem);
     });
@@ -1631,18 +1705,27 @@ function createSafisOverlay() {
     const moreCount = results.length > 6 ? results.length - 6 : 0;
     if (moreCount > 0) {
       const moreIndicator = document.createElement('div');
-      moreIndicator.style.cssText = 'padding: 10px 16px; color: #667eea; font-size: 12px; text-align: center; font-weight: 500; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(102, 126, 234, 0.03);';
+      moreIndicator.style.cssText = 'padding: 10px 16px; color: #eb5939; font-size: 12px; text-align: center; font-weight: 500; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(235, 89, 57, 0.03);';
       moreIndicator.textContent = `+ ${moreCount} more bookmark${moreCount !== 1 ? 's' : ''}`;
       container.appendChild(moreIndicator);
     }
   }
 
   function searchBookmarks(query) {
-    if (!allBookmarks || !Array.isArray(allBookmarks)) return [];
+    // Determine which bookmarks to search based on current mode
+    let searchSource = allBookmarks;
+    if (currentMode === 'folder') {
+      const folder = customFolders.find(f => f.id === currentCategory);
+      searchSource = folder ? folder.bookmarks : [];
+    }
+    
+    if (!searchSource || !Array.isArray(searchSource)) {
+      return [];
+    }
     
     const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
     
-    const results = allBookmarks.map(bookmark => {
+    const results = searchSource.map(bookmark => {
       let score = 0;
       const title = bookmark.title.toLowerCase();
       const domain = bookmark.domain.toLowerCase();
@@ -1732,7 +1815,7 @@ function createSafisOverlay() {
     modalContent.innerHTML = `
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
         <h2 style="margin: 0; color: #fff; font-size: 18px; font-weight: 600;">Edit Bookmark</h2>
-        <button id="close-edit-modal" style="width: 28px; height: 28px; border: none; background: rgba(255,255,255,0.1); color: #999; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">×</button>
+        <button id="close-edit-modal" class="btn-close">×</button>
       </div>
       <div style="margin-bottom: 20px;">
         <label style="display: block; color: #ccc; font-size: 14px; margin-bottom: 8px; font-weight: 500;">Bookmark Title</label>
@@ -1740,7 +1823,7 @@ function createSafisOverlay() {
           width: 100%;
           padding: 12px 16px;
           background: rgba(255,255,255,0.05);
-          border: 2px solid rgba(102, 126, 234, 0.3);
+          border: 2px solid rgba(235, 89, 57, 0.3);
           border-radius: 8px;
           color: #fff;
           font-size: 14px;
@@ -1785,12 +1868,12 @@ function createSafisOverlay() {
 
     // Input focus styles
     input.addEventListener('focus', () => {
-      input.style.borderColor = '#667eea';
-      input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+      input.style.borderColor = '#eb5939';
+      input.style.boxShadow = '0 0 0 3px rgba(235, 89, 57, 0.1)';
     });
 
     input.addEventListener('blur', () => {
-      input.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+      input.style.borderColor = 'rgba(235, 89, 57, 0.3)';
       input.style.boxShadow = 'none';
     });
 
@@ -1878,12 +1961,12 @@ function createSafisOverlay() {
     modalContent.className = 'safis-modal-content';
 
     modalContent.innerHTML = `
-      <div style="margin-bottom: 20px; text-align: center;">
-        <div style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(220, 53, 69, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #dc3545; font-size: 20px;">🗑️</div>
-        <h2 style="margin: 0 0 8px 0; color: #fff; font-size: 18px; font-weight: 600;">Delete Bookmark</h2>
-        <p style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.4;">Are you sure you want to delete "<strong>${escapeHtml(bookmark.title)}</strong>"?<br>This action cannot be undone.</p>
+      <div class="delete-dialog-content">
+        <div class="delete-dialog-icon">🗑️</div>
+        <h2 class="delete-dialog-title">Delete Bookmark</h2>
+        <p class="delete-dialog-text">Are you sure you want to delete "<strong>${escapeHtml(bookmark.title)}</strong>"?<br>This action cannot be undone.</p>
       </div>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+      <div class="delete-dialog-actions">
         <button id="cancel-delete-bookmark" style="
           padding: 10px 20px;
           border: 2px solid rgba(255,255,255,0.1);
@@ -2476,7 +2559,7 @@ function createSafisOverlay() {
         align-items: center;
         justify-content: space-between;
         padding: 12px 16px;
-        border: 1px solid rgba(102, 126, 234, 0.3);
+        border: 1px solid rgba(235, 89, 57, 0.3);
         border-radius: 8px;
         margin-bottom: 8px;
         cursor: pointer;
@@ -2489,9 +2572,9 @@ function createSafisOverlay() {
         </div>
         <button class="import-btn" data-folder-id="${folder.id}" data-folder-name="${escapeHtml(folder.title)}" style="
           padding: 6px 12px;
-          border: 2px solid #667eea;
-          background: rgba(102, 126, 234, 0.2);
-          color: #667eea;
+          border: 2px solid #eb5939;
+          background: rgba(235, 89, 57, 0.2);
+          color: #eb5939;
           border-radius: 6px;
           cursor: pointer;
           font-size: 12px;
@@ -2619,9 +2702,9 @@ function createSafisOverlay() {
           // Reset button after 3 seconds to allow retry
           setTimeout(() => {
             btn.textContent = 'Import';
-            btn.style.background = 'rgba(102, 126, 234, 0.2)';
-            btn.style.borderColor = '#667eea';
-            btn.style.color = '#667eea';
+            btn.style.background = 'rgba(235, 89, 57, 0.2)';
+            btn.style.borderColor = '#eb5939';
+            btn.style.color = '#eb5939';
           }, 3000);
         }
       });

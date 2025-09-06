@@ -57,6 +57,258 @@
    MAIN MODAL STRUCTURE
    ======================================== */
 
+/* Modal header icon */
+.modal-header-icon {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+/* Modal sidebar */
+.modal-sidebar {
+  width: 70px !important;
+  background: #111 !important;
+  border-right: 1px solid #2a2a2a !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 12px 0 0 12px !important;
+  padding: 16px 0 !important;
+}
+
+/* Sidebar content container */
+.sidebar-content {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* Modal header button */
+.modal-header-btn {
+  width: 42px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  transition: all 0.2s !important;
+  margin-bottom: 16px !important;
+}
+
+/* Sidebar divider */
+.sidebar-divider {
+  width: 24px !important;
+  height: 1px !important;
+  background: #333 !important;
+  margin: 8px 0 !important;
+  border-radius: 1px !important;
+}
+
+/* Sidebar view controls */
+.sidebar-view-controls {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid #2a2a2a !important;
+}
+
+/* Modal main content area */
+.modal-main-content {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #1a1a1a !important;
+  border-radius: 0 12px 12px 0 !important;
+}
+
+/* Modal content header */
+.modal-content-header {
+  padding: 16px 20px 12px 20px !important;
+  border-bottom: 1px solid #2a2a2a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Modal content title */
+.modal-content-title {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+
+/* Modal content subtitle */
+.modal-content-subtitle {
+  margin: 2px 0 0 0 !important;
+  font-size: 12px !important;
+  color: #888 !important;
+}
+
+/* Modal sort controls */
+.modal-sort-controls {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+/* Modal bookmarks container */
+.modal-bookmarks-container {
+  flex: 1 !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+  position: relative !important;
+}
+
+/* Modal bookmarks grid */
+.modal-bookmarks-grid {
+  display: none;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+  padding-bottom: 40px !important;
+  align-items: start !important;
+}
+
+.modal-bookmarks-grid.show {
+  display: grid !important;
+}
+
+/* Modal bookmarks loading */
+.modal-bookmarks-loading {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #666 !important;
+  font-size: 14px !important;
+  padding: 60px 0 !important;
+  text-align: center !important;
+}
+
+/* Modal loading spinner */
+.modal-loading-spinner {
+  width: 32px !important;
+  height: 32px !important;
+  border: 3px solid #333 !important;
+  border-top-color: #eb5939 !important;
+  border-radius: 50% !important;
+  animation: spin 1s linear infinite !important;
+  margin-bottom: 16px !important;
+}
+
+/* Modal bookmarks list */
+.modal-bookmarks-list {
+  display: none;
+  flex-direction: column !important;
+  gap: 12px !important;
+  overflow-y: auto !important;
+  overflow-x: visible !important;
+  max-height: calc(100% - 20px) !important;
+  padding: 0 16px 40px 16px !important;
+}
+
+.modal-bookmarks-list.show {
+  display: flex !important;
+}
+
+/* Modal search popup */
+.modal-search-popup {
+  position: absolute !important;
+  top: 60px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(480px, calc(100vw - 40px)) !important;
+  max-width: 90% !important;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(34, 34, 34, 0.98)) !important;
+  border: 1px solid #444 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1) !important;
+  z-index: 1000 !important;
+  display: none !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(24px) !important;
+}
+
+.modal-search-popup.show {
+  display: block !important;
+}
+
+/* Search result items */
+.search-result-item:last-child {
+  border-bottom: none !important;
+}
+
+.search-result-item:hover {
+  background: rgba(235, 89, 57, 0.1) !important;
+  transform: translateX(4px) !important;
+}
+
+/* Modal search input container */
+.modal-search-input-container {
+  padding: 16px !important;
+}
+
+/* Modal search input wrapper */
+.modal-search-input-wrapper {
+  position: relative !important;
+}
+
+/* Modal search input */
+.modal-search-input {
+  width: 100% !important;
+  padding: 12px 16px 12px 40px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(235, 89, 57, 0.4) !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  outline: none !important;
+  transition: all 0.3s ease !important;
+  font-weight: 400 !important;
+  box-sizing: border-box !important;
+}
+
+/* Modal search icon */
+.modal-search-icon {
+  position: absolute !important;
+  left: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #eb5939 !important;
+}
+
+/* Modal search icon inner */
+.modal-search-icon-inner {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Modal search results */
+.modal-search-results {
+  max-height: 350px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* Modal search placeholder */
+.modal-search-placeholder {
+  padding: 20px !important;
+  color: #888 !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  font-weight: 400 !important;
+}
+
 /* Modal overlay - covers the entire viewport */
 .safis-overlay {
   position: fixed !important;
@@ -315,7 +567,7 @@
 
 /* Modal header styling */
 #modal-header:hover {
-  background: rgba(102, 126, 234, 0.1) !important;
+  background: rgba(235, 89, 57, 0.1) !important;
   transform: scale(1.05);
 }
 
@@ -390,8 +642,8 @@
 
 /* Search input styling */
 #search-input:focus {
-  border-color: #667eea !important;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+  border-color: #eb5939 !important;
+  box-shadow: 0 0 0 2px rgba(235, 89, 57, 0.2) !important;
 }
 
 /* Primary action buttons */
@@ -460,7 +712,7 @@
 
 /* Edit bookmark button */
 .action-btn.edit-bookmark:hover {
-  background: rgba(102, 126, 234, 0.3) !important;
+  background: rgba(235, 89, 57, 0.3) !important;
   color: #8fa4f3 !important;
 }
 
@@ -478,6 +730,166 @@
 
 /* ========================================
    MODAL COMPONENTS
+   ======================================== */
+
+/* Modal structure classes */
+.modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
+}
+
+.modal-title {
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.modal-close-btn {
+  width: 28px !important;
+  height: 28px !important;
+  border: none !important;
+  background: rgba(255,255,255,0.1) !important;
+  color: #999 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  transition: all 0.2s !important;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255,255,255,0.2) !important;
+  color: #fff !important;
+}
+
+.modal-field {
+  margin-bottom: 20px !important;
+}
+
+.modal-label {
+  display: block !important;
+  color: #ccc !important;
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
+  font-weight: 500 !important;
+}
+
+.modal-input {
+  width: 100% !important;
+  padding: 12px 16px !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 2px solid rgba(235, 89, 57, 0.3) !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  outline: none !important;
+  transition: all 0.2s !important;
+  box-sizing: border-box !important;
+}
+
+.modal-input:focus {
+  border-color: #eb5939 !important;
+  box-shadow: 0 0 0 2px rgba(235, 89, 57, 0.2) !important;
+}
+
+.modal-buttons {
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
+}
+
+.btn-cancel {
+  padding: 10px 20px !important;
+  border: 2px solid rgba(255,255,255,0.1) !important;
+  background: transparent !important;
+  color: #ccc !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s !important;
+}
+
+.btn-cancel:hover {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.2) !important;
+  color: #fff !important;
+}
+
+.btn-danger {
+  padding: 10px 20px !important;
+  border: none !important;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s !important;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%) !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Modal content center (for delete confirmations) */
+.modal-content-center {
+  margin-bottom: 20px !important;
+  text-align: center !important;
+}
+
+.modal-warning-icon {
+  width: 48px !important;
+  height: 48px !important;
+  margin: 0 auto 16px !important;
+  background: rgba(220, 53, 69, 0.2) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #dc3545 !important;
+  font-size: 20px !important;
+}
+
+.modal-text {
+  margin: 0 !important;
+  color: #ccc !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+/* Modal bookmark preview */
+.modal-bookmark-preview {
+  margin-bottom: 16px !important;
+  padding: 12px 16px !important;
+  background: rgba(235, 89, 57, 0.1) !important;
+  border: 1px solid rgba(235, 89, 57, 0.3) !important;
+  border-radius: 8px !important;
+}
+
+.modal-bookmark-preview-label {
+  font-size: 12px !important;
+  color: #eb5939 !important;
+  margin-bottom: 4px !important;
+}
+
+.modal-bookmark-preview-title {
+  font-size: 14px !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* ========================================
+   ORIGINAL MODAL COMPONENTS
    ======================================== */
 
 /* Base modal overlay for all popups */
@@ -519,43 +931,495 @@
   background: linear-gradient(135deg, #222 0%, #111 100%);
   border: 1px solid #333;
   border-radius: 10px;
-  padding: 18px;
+  padding: 24px !important;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  min-height: 160px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
 }
 
+/* Bookmark card content structure */
+.bookmark-card-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  flex: 1 !important;
+}
+
+/* Bookmark card header */
+.bookmark-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Bookmark favicon container */
+.bookmark-favicon-container {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Bookmark favicon */
+.bookmark-favicon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 6px !important;
+}
+
+/* Bookmark favicon fallback and default */
+.bookmark-favicon-fallback,
+.bookmark-favicon-default {
+  font-size: 28px !important;
+  opacity: 0.7 !important;
+}
+
+/* Bookmark menu */
+.bookmark-menu {
+  position: relative !important;
+  opacity: 1 !important;
+  transition: opacity 0.2s !important;
+}
+
+/* Menu trigger button */
+.bookmark-menu .menu-trigger {
+  width: 24px !important;
+  height: 24px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #999 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s !important;
+}
+
+/* Menu dropdown */
+.bookmark-menu .menu-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  background: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+  z-index: 9999 !important;
+  min-width: 120px !important;
+  display: none !important;
+  margin-top: 4px !important;
+}
+
+/* Show dropdown when active */
+.bookmark-menu .menu-dropdown.menu-dropdown-show {
+  display: block !important;
+}
+
+/* List view specific styles */
+.bookmark-list-favicon {
+  width: 48px !important;
+  height: 48px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 2px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.bookmark-list-content {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  margin: 0 12px 0 8px !important;
+}
+
+.bookmark-list-info {
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.bookmark-list-title {
+  margin: 0 0 4px 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  line-height: 1.3 !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255,255,255,0.2) transparent !important;
+}
+
+.bookmark-list-domain {
+  font-size: 13px !important;
+  color: #888 !important;
+  opacity: 0.8 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+  font-weight: 400 !important;
+}
+
+.bookmark-list-menu {
+  position: relative !important;
+  opacity: 0 !important;
+  transition: all 0.3s ease !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-right: 8px !important;
+}
+
+/* 3-dot menu trigger */
+.bookmark-list-menu .menu-trigger {
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #aaa !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  font-size: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.bookmark-list-menu .menu-trigger:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Individual action buttons (shown when expanded) */
+.bookmark-list-menu .action-buttons {
+  display: none !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.bookmark-list-menu.expanded .menu-trigger {
+  display: none !important;
+}
+
+.bookmark-list-menu.expanded .action-buttons {
+  display: flex !important;
+}
+
+.bookmark-list-menu .action-btn {
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #aaa !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  font-size: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.bookmark-list-menu .action-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Specific button colors */
+.bookmark-list-menu .action-btn.add-folder {
+  color: #4ade80 !important;
+}
+
+.bookmark-list-menu .action-btn.add-folder:hover {
+  background: rgba(74, 222, 128, 0.15) !important;
+  color: #4ade80 !important;
+}
+
+.bookmark-list-menu .action-btn.edit {
+  color: #60a5fa !important;
+}
+
+.bookmark-list-menu .action-btn.edit:hover {
+  background: rgba(96, 165, 250, 0.15) !important;
+  color: #60a5fa !important;
+}
+
+.bookmark-list-menu .action-btn.delete {
+  color: #f87171 !important;
+}
+
+.bookmark-list-menu .action-btn.delete:hover {
+  background: rgba(248, 113, 113, 0.15) !important;
+  color: #f87171 !important;
+}
+
+/* Menu collapse button */
+.bookmark-list-menu .menu-collapse {
+  display: none !important;
+  width: 24px !important;
+  height: 24px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #aaa !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  font-size: 12px !important;
+  margin-left: 8px !important;
+}
+
+.bookmark-list-menu.expanded .menu-collapse {
+  display: flex !important;
+}
+
+.bookmark-list-menu .menu-collapse:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+/* List view dropdown positioning */
+.bookmark-list-menu .menu-dropdown {
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  right: 0 !important;
+  background: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+  z-index: 10001 !important;
+  min-width: 140px !important;
+  max-width: 180px !important;
+  display: none !important;
+  white-space: nowrap !important;
+}
+
+.bookmark-list-menu .menu-dropdown.menu-dropdown-show {
+  display: block !important;
+}
+
+/* Handle dropdowns at the bottom of the list */
+.bookmark-item:last-child .bookmark-list-menu .menu-dropdown {
+  bottom: 100% !important;
+  top: auto !important;
+  margin-bottom: 4px !important;
+  margin-top: 0 !important;
+}
+
+.bookmark-list-menu .menu-item {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #ccc !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border-bottom: 1px solid #333 !important;
+  transition: all 0.2s ease !important;
+}
+
+.bookmark-list-menu .menu-item.delete-bookmark {
+  color: #ff9999 !important;
+}
+
+.bookmark-list-menu .menu-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Menu dropdown items */
+.bookmark-menu .menu-item {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #ccc !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  border-bottom: 1px solid #333 !important;
+  transition: all 0.2s !important;
+}
+
+.bookmark-menu .menu-item.delete-bookmark {
+  color: #ff9999 !important;
+}
+
+.bookmark-menu .menu-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Bookmark card info section */
+.bookmark-card-info {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Bookmark title */
+.bookmark-title {
+  margin: 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  line-height: 1.3 !important;
+  max-height: 42px !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+}
+
+/* Bookmark domain */
+.bookmark-domain {
+  margin: 8px 0 0 0 !important;
+  font-size: 12px !important;
+  color: #888 !important;
+  opacity: 0.9 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Bookmark card footer */
+.bookmark-card-footer {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin-top: 10px !important;
+}
+
+/* Bookmark category badge */
+.bookmark-category {
+  background: rgba(235, 89, 57, 0.12) !important;
+  color: #eb5939 !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+}
+
 .bookmark-card:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  border-color: #667eea;
+  border-color: #eb5939;
 }
 
-/* List view bookmark items */
+/* List view bookmark items - Sketch Design */
 .bookmark-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
   background: linear-gradient(135deg, #222 0%, #111 100%);
   border: 1px solid #333;
   border-radius: 10px;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  min-height: 64px;
+  min-height: 72px;
   position: relative;
+  overflow: visible;
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  z-index: 1;
 }
 
 .bookmark-item:hover {
-  transform: translateX(4px);
-  border-color: #667eea;
+  z-index: 1000;
+  transform: translateY(-2px) scale(1.01);
+  border-color: #eb5939;
   background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.bookmark-item:hover .bookmark-list-menu {
+  opacity: 1 !important;
+}
+
+/* ========================================
+   NO FOLDERS STATE
+   ======================================== */
+
+.no-folders-container {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #888 !important;
+  font-size: 14px !important;
+  padding: 80px 20px !important;
+  text-align: center !important;
+}
+
+.no-folders-icon {
+  font-size: 48px !important;
+  margin-bottom: 16px !important;
+}
+
+.no-folders-title {
+  margin: 0 0 8px 0 !important;
+  color: #ccc !important;
+  font-weight: 500 !important;
+}
+
+.no-folders-text {
+  margin: 0 !important;
+  opacity: 0.8 !important;
+  line-height: 1.4 !important;
+}
+
+.no-folders-buttons {
+  display: flex !important;
+  gap: 12px !important;
+  margin-top: 20px !important;
+}
+
+.btn-primary {
+  padding: 10px 20px !important;
+  background: #eb5939 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+
+.btn-secondary {
+  padding: 10px 20px !important;
+  background: rgba(235, 89, 57, 0.2) !important;
+  border: 2px solid #eb5939 !important;
+  border-radius: 8px !important;
+  color: #eb5939 !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
 }
 
 /* ========================================
@@ -564,23 +1428,134 @@
 
 /* Folder grid cards */
 .folder-card {
-  background: linear-gradient(135deg, #2a2a2a, #333);
-  border: 1px solid #444;
-  border-radius: 12px;
-  padding: 20px;
+  background: linear-gradient(135deg, #222 0%, #111 100%);
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 24px !important;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  min-height: 140px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
+}
+
+.folder-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+
+.folder-icon {
+  font-size: 24px !important;
+}
+
+.folder-menu {
+  position: relative !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s !important;
+}
+
+.folder-menu-trigger {
+  padding: 2px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #999 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s !important;
+}
+
+.folder-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  background: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+  z-index: 9999 !important;
+  min-width: 120px !important;
+  display: none !important;
+}
+
+.folder-dropdown.folder-dropdown-show {
+  display: block !important;
+}
+
+.folder-menu-item {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #ccc !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  border-bottom: 1px solid #333 !important;
+  transition: all 0.2s !important;
+}
+
+.folder-menu-item.delete-folder {
+  color: #ff9999 !important;
+}
+
+.folder-menu-item:last-child {
+  border-bottom: none !important;
+}
+
+.folder-name {
+  margin: 0 0 8px 0 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+
+.folder-count {
+  margin: 0 !important;
+  font-size: 12px !important;
+  color: #888 !important;
+}
+
+.new-folder-card {
+  background: rgba(235, 89, 57, 0.1) !important;
+  border: 2px dashed #eb5939 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.new-folder-icon {
+  font-size: 32px !important;
+  margin-bottom: 8px !important;
+  color: #eb5939 !important;
+}
+
+.new-folder-text {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: #eb5939 !important;
+  font-weight: 500 !important;
 }
 
 .folder-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  border-color: #667eea;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: #eb5939;
 }
 
 /* Folder actions (edit, delete buttons) */
@@ -626,7 +1601,7 @@
 }
 
 .folder-option:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(235, 89, 57, 0.1);
 }
 
 .folder-option:last-child {
@@ -718,7 +1693,7 @@
   width: 24px;
   height: 24px;
   border: 2px solid #3E3A35;
-  border-top-color: #667eea;
+  border-top-color: #eb5939;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -784,6 +1759,44 @@
 }
 
 /* ========================================
+   FAVICON STYLES
+   ======================================== */
+
+.bookmark-list-favicon-img {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+}
+
+.bookmark-list-favicon-fallback {
+  color: #888 !important;
+  font-size: 24px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.bookmark-list-favicon-default {
+  color: #888 !important;
+  font-size: 24px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.favicon-error {
+  display: none !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ========================================
    UTILITY CLASSES
    ======================================== */
 
@@ -811,7 +1824,7 @@
 
 /* Focus visible for accessibility */
 .safis-focus:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid #eb5939;
   outline-offset: 2px;
 }
 
@@ -836,6 +1849,192 @@
 .safis-dark input:focus,
 .safis-dark textarea:focus,
 .safis-dark select:focus {
-  border-color: #667eea !important;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+  border-color: #eb5939 !important;
+  box-shadow: 0 0 0 2px rgba(235, 89, 57, 0.2) !important;
+}
+
+/* ========================================
+   ADDITIONAL COMPONENT STYLES
+   ======================================== */
+
+/* Folder creation dialog styles */
+.folder-create-content {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.folder-create-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  background: rgba(235, 89, 57, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #eb5939;
+  font-size: 20px;
+}
+
+.folder-create-title {
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.folder-create-text {
+  margin: 0;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.folder-dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Folder item styles */
+.folder-item-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.folder-item-icon {
+  font-size: 16px;
+}
+
+.folder-item-details {
+  /* Container for folder item details */
+}
+
+.folder-item-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.folder-item-count {
+  color: #888;
+  font-size: 11px;
+}
+
+.folder-item-add-icon {
+  color: #eb5939;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* Delete dialog styles */
+.delete-dialog-content {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.delete-dialog-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  background: rgba(220, 53, 69, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc3545;
+  font-size: 20px;
+}
+
+.delete-dialog-title {
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.delete-dialog-text {
+  margin: 0;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.delete-dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Button styles for dialogs */
+.btn-cancel {
+  padding: 10px 20px;
+  border: 2px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  border: 2px solid #eb5939;
+  background: #eb5939;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #c13923;
+  border-color: #c13923;
+}
+
+.btn-danger {
+  padding: 10px 20px;
+  border: 2px solid #dc3545;
+  background: #dc3545;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+  border-color: #c82333;
+}
+
+.btn-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: #999;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.btn-close:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
 }

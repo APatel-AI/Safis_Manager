@@ -39,7 +39,7 @@
   
   "web_accessible_resources": [
     {
-      "resources": ["src/modal-injector.js", "src/bookmark-api.js", "src/styles.css", "assets/*", "window.html", "src/window-script.js"],
+      "resources": ["src/modal-injector.js", "src/bookmark-api.js", "src/styles.css", "assets/*"],
       "matches": ["<all_urls>"]
     }
   ]
