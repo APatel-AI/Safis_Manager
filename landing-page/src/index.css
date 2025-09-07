@@ -168,7 +168,8 @@ body {
 
 .cta-buttons {
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  gap: 20px;
   justify-content: center;
   align-items: center;
 }
@@ -194,6 +195,7 @@ body {
     linear-gradient(black, black) padding-box, /* inner stays black */
     linear-gradient(90deg, #ea4335, #fbbc05, #34a853, #4285f4) border-box; 
 }
+
 
 .store-badge {
   display: flex;
