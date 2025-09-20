@@ -122,7 +122,7 @@ function App() {
             <h4>It's simply a</h4>
             <h1>Bookmark manager</h1>
             <p className="hero-subtitle">
-              For busy proffesionals with a lot of useful digital resources to keep handy.
+              For busy professionals with a lot of useful digital resources to keep handy.
             </p>
             <div className="cta-buttons">
               <a href="https://www.producthunt.com/products/safis?utm_source=badge-follow&utm_medium=badge&utm_source=badge-safis" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=1104859&theme=dark" alt="Safis - Bookmark&#0032;manager | Product Hunt" style={{width: '250px', height: '54px'}} width="250" height="54" /></a>
