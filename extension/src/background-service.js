@@ -1,15 +1,46 @@
 // Safis Extension Service Worker
 console.log('Safis service worker loaded');
 
+// Global state for the background script
 let activeTabId = null;
+
+// Configuration constants (inline for compatibility)
+const CONFIG = {
+  RESTRICTED_PROTOCOLS: [
+    'chrome://',
+    'chrome-extension://',
+    'moz-extension://',
+    'safari-extension://',
+    'edge-extension://',
+    'about:',
+    'chrome-search://',
+    'chrome-native://',
+    'data:',
+    'file://'
+  ],
+  RESTRICTED_DOMAINS: [
+    'chrome.google.com/webstore',
+    'addons.mozilla.org',
+    'microsoftedge.microsoft.com/addons'
+  ],
+  MAX_RETRY_ATTEMPTS: 3,
+  RETRY_DELAY: 1000
+};
+
+// Simple logging with context
+function logWithContext(level, message, data = {}) {
+  const timestamp = new Date().toISOString();
+  const prefix = `[${timestamp}] [${level}] [BACKGROUND]`;
+  console[level.toLowerCase()](`${prefix} ${message}`, data);
+}
 
 // Handle extension icon click
 chrome.action.onClicked.addListener(async (tab) => {
-  console.log('Extension icon clicked for tab:', tab.url);
+  logWithContext('info', 'Extension icon clicked', { tabId: tab.id, url: tab.url });
   
   // Check if URL is injectable
   if (!isInjectableUrl(tab.url)) {
-    console.log('Cannot inject on this URL:', tab.url);
+    logWithContext('warn', 'Cannot inject on this URL', { url: tab.url });
     showNotificationToUser('Cannot open Safis on this page. Try opening it on a regular website.');
     return;
   }
@@ -22,10 +53,9 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
     
     activeTabId = tab.id;
-    console.log('Overlay injected into tab:', tab.id);
-
+    logWithContext('info', 'Overlay injected successfully', { tabId: tab.id });
   } catch (error) {
-    console.error('Failed to inject overlay:', error);
+    logWithContext('error', 'Failed to inject overlay', { error: error.message, tabId: tab.id });
     showNotificationToUser('Could not open Safis on this page. Try a different website.');
   }
 });
@@ -34,36 +64,18 @@ chrome.action.onClicked.addListener(async (tab) => {
 function isInjectableUrl(url) {
   if (!url) return false;
   
-  const restrictedProtocols = [
-    'chrome://',
-    'chrome-extension://',
-    'moz-extension://',
-    'safari-extension://',
-    'edge-extension://',
-    'about:',
-    'moz-extension://',
-    'chrome-search://',
-    'chrome-native://',
-    'data:',
-    'file://'
-  ];
-  
-  const restrictedDomains = [
-    'chrome.google.com/webstore',
-    'addons.mozilla.org',
-    'microsoftedge.microsoft.com/addons'
-  ];
-  
   // Check restricted protocols
-  for (const protocol of restrictedProtocols) {
+  for (const protocol of CONFIG.RESTRICTED_PROTOCOLS) {
     if (url.startsWith(protocol)) {
+      logWithContext('debug', 'URL blocked by protocol restriction', { url, protocol });
       return false;
     }
   }
   
   // Check restricted domains
-  for (const domain of restrictedDomains) {
+  for (const domain of CONFIG.RESTRICTED_DOMAINS) {
     if (url.includes(domain)) {
+      logWithContext('debug', 'URL blocked by domain restriction', { url, domain });
       return false;
     }
   }
@@ -73,22 +85,37 @@ function isInjectableUrl(url) {
 
 // Show notification to user when injection fails
 function showNotificationToUser(message) {
-  chrome.notifications.create({
-    type: 'basic',
-    iconUrl: 'assets/glasses_emoji.png',
-    title: 'Safis Bookmark Manager',
-    message: message
-  });
+  logWithContext('info', 'Showing user notification', { message });
+  
+  try {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'assets/glasses_emoji.png',
+      title: 'Safis Bookmark Manager',
+      message: message
+    }, () => {
+      if (chrome.runtime.lastError) {
+        logWithContext('error', 'Failed to show notification', { error: chrome.runtime.lastError.message });
+      }
+    });
+  } catch (error) {
+    logWithContext('error', 'Error creating notification', { error: error.message });
+  }
 }
 
 // Handle messages from content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Service worker received message:', request.type);
+  logWithContext('debug', 'Service worker received message', { type: request.type, senderId: sender.tab?.id });
   
   if (request.type === 'GET_BOOKMARKS') {
     chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-      console.log('Sending bookmarks to content script');
-      sendResponse({ bookmarks: bookmarkTreeNodes });
+      if (chrome.runtime.lastError) {
+        logWithContext('error', 'Failed to get bookmarks', { error: chrome.runtime.lastError.message });
+        sendResponse({ error: chrome.runtime.lastError.message });
+      } else {
+        logWithContext('info', 'Sending bookmarks to content script', { nodeCount: bookmarkTreeNodes?.length || 0 });
+        sendResponse({ bookmarks: bookmarkTreeNodes });
+      }
     });
     return true;
   }

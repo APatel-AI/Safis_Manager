@@ -1,35 +1,96 @@
 // Bookmark API - Chrome bookmarks API interactions
 // This file handles all communication with Chrome's bookmark system
 
+// Configuration constants (inline for compatibility)
+const CONFIG = {
+  FAVICON_SERVICE: 'https://www.google.com/s2/favicons',
+  FAVICON_SIZE: '64',
+  MAX_RETRY_ATTEMPTS: 3,
+  RETRY_DELAY: 1000
+};
+
+// Simple logging with context
+function logWithContext(level, message, data = {}) {
+  const timestamp = new Date().toISOString();
+  const prefix = `[${timestamp}] [${level}] [API]`;
+  console[level.toLowerCase()](`${prefix} ${message}`, data);
+}
+
+// Error handling with retry logic
+async function withErrorHandling(asyncFn, context, options = {}) {
+  const { allowRetry = false, retryKey = null, showToUser = false, fallbackValue = null } = options;
+  let attempts = 0;
+  
+  while (attempts <= CONFIG.MAX_RETRY_ATTEMPTS) {
+    try {
+      const result = await asyncFn();
+      return result;
+    } catch (error) {
+      attempts++;
+      logWithContext('error', `Error in ${context} (attempt ${attempts})`, { error: error.message });
+      
+      if (attempts <= CONFIG.MAX_RETRY_ATTEMPTS && allowRetry) {
+        logWithContext('info', `Retrying ${context} in ${CONFIG.RETRY_DELAY}ms`);
+        await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
+        continue;
+      }
+      
+      if (showToUser && typeof chrome !== 'undefined' && chrome.notifications) {
+        chrome.notifications.create({
+          type: 'basic',
+          iconUrl: 'assets/glasses_emoji.png',
+          title: 'Safis Error',
+          message: `Error in ${context}. Please try again.`
+        });
+      }
+      
+      if (fallbackValue !== null) {
+        return fallbackValue;
+      }
+      
+      throw error;
+    }
+  }
+}
+
 export async function sendMessageToBackground(message) {
-  try {
+  return withErrorHandling(async () => {
     if (!chrome?.runtime?.sendMessage) {
       throw new Error('Chrome runtime API not available');
     }
+    
+    logWithContext('debug', 'Sending message to background', { type: message.type });
+    const startTime = Date.now();
+    
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(message, (response) => {
+        const duration = Date.now() - startTime;
+        
         if (chrome.runtime.lastError) {
-          console.error('Runtime error:', chrome.runtime.lastError.message);
+          logWithContext('error', 'Runtime error', { error: chrome.runtime.lastError.message });
           reject(new Error(chrome.runtime.lastError.message));
         } else if (!response) {
-          console.error('No response from background script for:', message.type);
+          logWithContext('error', 'No response from background script', { messageType: message.type });
           reject(new Error('No response from background script'));
         } else {
+          logWithContext('debug', 'Background message successful', { type: message.type, duration });
           resolve(response);
         }
       });
     });
-  } catch (error) {
-    console.error('Failed to send message to background:', error);
-    throw error;
-  }
+  }, 'sendMessageToBackground', {
+    allowRetry: true,
+    showToUser: true
+  });
 }
 
 export async function loadBookmarks() {
-  try {
-    console.log('Loading bookmarks via background script...');
+  return withErrorHandling(async () => {
+    logWithContext('info', 'Loading bookmarks via background script');
+    const startTime = Date.now();
+    
     const response = await sendMessageToBackground({ type: 'GET_BOOKMARKS' });
-    console.log('Bookmarks response:', response);
+    logWithContext('debug', 'Bookmarks response received', { bookmarkCount: response?.bookmarks?.length || 0 });
     
     const allBookmarks = [];
     
@@ -56,32 +117,34 @@ export async function loadBookmarks() {
       });
     }
 
-    console.log('Processed bookmarks:', allBookmarks.length);
+    const duration = Date.now() - startTime;
+    logWithContext('info', `loadBookmarks completed in ${duration}ms`, { count: allBookmarks.length });
     return allBookmarks;
-    
-  } catch (error) {
-    console.error('Failed to load bookmarks:', error);
-    throw error;
-  }
+  }, 'bookmark_load', {
+    allowRetry: true,
+    showToUser: true,
+    fallbackValue: []
+  });
 }
 
 export async function addCurrentTabBookmark() {
-  try {
-    console.log('Adding current tab as bookmark...');
+  return withErrorHandling(async () => {
+    logWithContext('info', 'Adding current tab as bookmark');
+    
     const response = await sendMessageToBackground({
       type: 'ADD_CURRENT_TAB_BOOKMARK'
     });
     
     if (response.success) {
-      console.log('Current tab bookmark added:', response.bookmark);
+      logWithContext('info', 'Current tab bookmark added successfully', { bookmarkId: response.bookmark?.id });
       return response.bookmark;
     } else {
       throw new Error(response.error || 'Failed to add bookmark');
     }
-  } catch (error) {
-    console.error('Error adding current tab bookmark:', error);
-    throw error;
-  }
+  }, 'bookmark_save', {
+    allowRetry: true,
+    showToUser: true
+  });
 }
 
 export async function deleteBookmark(bookmarkId) {
@@ -197,8 +260,9 @@ export function getDomainFromUrl(url) {
 export function getFaviconUrl(url) {
   try {
     const domain = new URL(url).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-  } catch {
+    return `${CONFIG.FAVICON_SERVICE}?domain=${domain}&sz=${CONFIG.FAVICON_SIZE}`;
+  } catch (error) {
+    logWithContext('warn', 'Invalid URL for favicon', { url, error: error.message });
     return null;
   }
 }

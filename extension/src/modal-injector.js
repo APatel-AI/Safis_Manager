@@ -67,17 +67,18 @@ function createSafisOverlay() {
     
     // Load data asynchronously without blocking initialization
     console.log('Loading bookmarks asynchronously...');
-    loadBookmarks().catch(error => {
+    loadBookmarks().then(() => {
+      // Show bookmarks by default after loading
+      selectCategory('all');
+    }).catch(error => {
       console.error('Failed to load bookmarks:', error);
     });
     
     console.log('Loading custom folders asynchronously...');
-    // Make sure custom folders load with higher priority and better error handling
+    // Load custom folders but don't display them by default
     setTimeout(() => {
       loadCustomFolders().catch(error => {
         console.error('Failed to load custom folders:', error);
-        // Ensure displayFolders is called even on complete failure
-        displayFolders();
       });
     }, 100); // Small delay to ensure DOM is ready
     
@@ -2117,7 +2118,6 @@ function createSafisOverlay() {
       if (!chrome?.storage?.local) {
         console.warn('Chrome storage API not available');
         customFolders = [];
-        displayFolders();
         return;
       }
 
@@ -2136,10 +2136,9 @@ function createSafisOverlay() {
       customFolders = result.customFolders || [];
       console.log('Loaded custom folders from extension storage:', customFolders.length);
       
-      // Display folders immediately to show what's already saved
+      // Load folders data but don't display them by default
       if (customFolders.length > 0) {
-        console.log('Displaying saved folders immediately');
-        displayFolders();
+        console.log('Loaded saved folders, ready for display when needed');
       }
       
       // Then sync any new folders from Chrome bookmarks via background script
@@ -2151,9 +2150,8 @@ function createSafisOverlay() {
         console.warn('Chrome bookmarks sync failed, continuing with saved folders:', syncError);
       }
       
-      // Final display of all folders (saved + synced)
-      console.log('Displaying all folders in UI...');
-      displayFolders();
+      // Folders loaded and ready for display when needed
+      console.log('All folders loaded and ready for display');
       console.log('=== LOAD CUSTOM FOLDERS COMPLETE ===');
       
     } catch (error) {
@@ -2167,8 +2165,7 @@ function createSafisOverlay() {
         console.error('Fallback storage read also failed:', fallbackError);
         customFolders = [];
       }
-      // Always display folders, even if empty
-      displayFolders();
+      // Folders loaded and ready for display when user switches to folders tab
     }
   }
 
